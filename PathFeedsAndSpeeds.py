@@ -322,7 +322,8 @@ class FeedSpeedPanel:
     def reset(self):
         pass
 
-panel = FeedSpeedPanel()
+def Show():
+    panel = FeedSpeedPanel()
 
 
 
