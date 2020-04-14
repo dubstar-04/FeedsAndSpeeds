@@ -108,7 +108,7 @@ class FeedSpeedPanel():
             tool.toolDia = float(self.drillDia_LE.text())
             calculation.feedPerTooth = float(self.drillFPT_LE.text())
             calculation.toolWear = 1.3 ## Tool Wear pg: 1048
-            calculationss_by_material = "ss_drill_hss" if self.hss_RB.isChecked() else "ss_drill_cbd"
+            calculation.ss_by_material = "ss_drill_hss" if self.hss_RB.isChecked() else "ss_drill_cbd"
             calculation.opType = 'Drilling'
 
         if not calculation.feedPerTooth:
