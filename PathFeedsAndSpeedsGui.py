@@ -24,14 +24,14 @@ class FeedSpeedPanel():
         #####################################
         self.toolDia_LE = self.form.toolDia_LE
         self.flutes_SB = self.form.flutes_SB
-        self.FPT_LE = self.form.FPT_LE
+        self.FPT_SB = self.form.FPT_SB
         self.WOC_SP = self.form.WOC_SP
         self.DOC_SP = self.form.DOC_SP
         #####################################
         ##           Drilling Page         ##
         #####################################
         self.drillDia_LE = self.form.drillDia_LE
-        self.drillFPT_LE = self.form.drillFPT_LE
+        self.drillFPT_SB = self.form.drillFPT_SB
         self.drilling_notes = self.form.drilling_notes
         #####################################
         ##             Results             ##
@@ -45,7 +45,6 @@ class FeedSpeedPanel():
         ### Init 
         self.setup_ui()
         self.calculate()
-        #self.reset()
 
         ### connect
         self.tabWidget.currentChanged.connect(self.calculate)
@@ -54,12 +53,12 @@ class FeedSpeedPanel():
         self.cbd_RB.toggled.connect(self.calculate)
         self.toolDia_LE.textChanged.connect(self.calculate)
         self.flutes_SB.valueChanged.connect(self.calculate)
-        self.FPT_LE.textChanged.connect(self.calculate)
+        self.FPT_SB.valueChanged.connect(self.calculate)
         self.WOC_SP.textChanged.connect(self.calculate)
         self.DOC_SP.textChanged.connect(self.calculate)
         self.rpm_LE.textChanged.connect(self.calculate)
         self.drillDia_LE.textChanged.connect(self.calculate)
-        self.drillFPT_LE.textChanged.connect(self.calculate)
+        self.drillFPT_SB.valueChanged.connect(self.calculate)
 
     def setup_ui(self):    
     
@@ -74,18 +73,15 @@ class FeedSpeedPanel():
         ### load widget data
         self.toolDia_LE.setText(str(self.toolDia))
         self.flutes_SB.setValue(2)
-        self.FPT_LE.setText(str(self.toolDia * 0.01))   
-        self.WOC_SP.setText(str(self.toolDia * 0.2 ))
+        self.FPT_SB.setValue(self.toolDia * 0.01)  
+        self.WOC_SP.setText(str(round(self.toolDia * 0.2, 2)))
         self.DOC_SP.setText(str(self.toolDia))
         self.drillDia_LE.setText(str(self.toolDia))
-        self.drillFPT_LE.setText(str(self.toolDia * 0.01))
-        #self.rpm_LE.setPlaceholderText("RPM Overide")
+        self.drillFPT_SB.setValue(self.toolDia * 0.01)
 
     def calculate(self):
-
         tool = PathFeedsAndSpeeds.Tool()
         calculation = PathFeedsAndSpeeds.FSCalculation()
-
         calculation.material = self.material_CB.currentText()
         calculation.rpm_overide = self.rpm_LE.text()
 
@@ -98,7 +94,7 @@ class FeedSpeedPanel():
             # calculate for milling
             tool.toolDia = float(self.toolDia_LE.text())
             tool.flutes = self.flutes_SB.value()
-            calculation.feedPerTooth = float(self.FPT_LE.text())
+            calculation.feedPerTooth = float(self.FPT_SB.value())
             calculation.WOC = FreeCAD.Units.Quantity(self.WOC_SP.text())
             calculation.DOC = FreeCAD.Units.Quantity(self.DOC_SP.text())         
             calculation.toolWear = 1.1 ## Tool Wear pg: 1048
@@ -107,7 +103,7 @@ class FeedSpeedPanel():
         else:
             # calculate for drilling
             tool.toolDia = float(self.drillDia_LE.text())
-            calculation.feedPerTooth = float(self.drillFPT_LE.text())
+            calculation.feedPerTooth = float(self.drillFPT_SB.value())
             calculation.toolWear = 1.3 ## Tool Wear pg: 1048
             calculation.ss_by_material = "ss_drill_hss" if self.hss_RB.isChecked() else "ss_drill_cbd"
             calculation.opType = 'Drilling'

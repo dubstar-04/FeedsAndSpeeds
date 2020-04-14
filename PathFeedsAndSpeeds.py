@@ -206,20 +206,10 @@ class FSCalculation:
 
         print('calculate for opType: ', self.opType)
         materials = load_materials()
-        powerConstant = load_powerConstant()
         surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         ## C = Power Constant
-        fptValues = list(powerConstant.keys())
-        cValues = list(powerConstant.values())
-        interp = Interpolate(fptValues, cValues)
-
-        try:
-            C = interp(self.feedPerTooth)
-        except:
-            print("Feed per tooth has exceeded the recommended range. 0.02 - 1.5")
-            return
-
+        C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth) 
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
         calc_rpm = rpm
         
@@ -233,29 +223,24 @@ class FSCalculation:
         if self.opType == 'Milling':
             feed = int(calc_rpm * self.feedPerTooth * tool.flutes)
             ## Calculation to Machineries Handbook: Pg 1058
-            print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
+            #print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
             ## Material Removal Rate: Pg 1049
             Q = float((self.WOC * self.DOC * feed) / 60000) ##cm^3/s
-            print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
+            #print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
             ## Power Required at the cutter: Pg 1048
             Pc = Kp * C * Q * self.toolWear
 
         if self.opType == 'Drilling':
             feed = int(self.feedPerTooth * calc_rpm)
-            #Q = float(((math.pi * tool.toolDia / 4) * feed) / 60000) ##cm^3/s
-
-            # Kd = Work material factor (See Table 31)
-            # Ff = Feed factor (See Table 33)
-            # FM = Torque factor for drill diameter (See Table 34)
-            # A = Chisel edge factor for torque (See Table 32)
-            # w = Web thickness at drill point; in., or mm (See Table 32)
+            # Kd = Work material factor (Table 31)
+            # Ff = Feed factor (Table 33)
+            # FM = Torque factor for drill diameter (Table 34)
+            # A = Chisel edge factor for torque (Table 32)
+            # w = Web thickness at drill point (See Table 32)
 
             Kd = next(item for item in materials if item["material"] == self.material).get("Kd")
             Ff = getInterpolatedValue(load_feedFactor(), self.feedPerTooth) 
             Fm = getInterpolatedValue(load_diameterFactors(), tool.toolDia)
-
-            print('Data:', Ff, Fm)
-
             A = 1.085 #fixed value based on standard 118 deg drill. Table 32
             W = 0.18 * tool.toolDia #fixed value based on standard 118 deg drill. Table 32
 
@@ -267,9 +252,7 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
-
-        print("power", Pc, Pm, Hp)
-
+        #print("power", Pc, Pm, Hp)
         return rpm, feed, Hp
 
 
