@@ -24,7 +24,7 @@
 
 import FreeCADGui
 from PySide import QtGui
-import PathFeedsAndSpeeds
+import PathFeedsAndSpeedsGui
 import os
 
 __dir__ = os.path.dirname(__file__)
@@ -45,7 +45,7 @@ def updateMenu(workbench):
         action.setIcon(QtGui.QPixmap(getIcon('Path_FeedsAndSpeeds.svg')))
         #action.setObjectName("Path")
         action.setStatusTip("Check Feeds and Speeds")
-        action.triggered.connect(PathFeedsAndSpeeds.Show)
+        action.triggered.connect(PathFeedsAndSpeedsGui.Show)
         menu.addAction(action)
 
 FreeCADGui.getMainWindow().workbenchActivated.connect(updateMenu)
