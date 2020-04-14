@@ -32,6 +32,7 @@ class FeedSpeedPanel():
         #####################################
         self.drillDia_LE = self.form.drillDia_LE
         self.drillFPT_LE = self.form.drillFPT_LE
+        self.drilling_notes = self.form.drilling_notes
         #####################################
         ##             Results             ##
         #####################################
@@ -110,6 +111,12 @@ class FeedSpeedPanel():
             calculation.toolWear = 1.3 ## Tool Wear pg: 1048
             calculation.ss_by_material = "ss_drill_hss" if self.hss_RB.isChecked() else "ss_drill_cbd"
             calculation.opType = 'Drilling'
+            print('tooldia', tool.toolDia)
+            if tool.toolDia:
+                notes = 'Note: Peck drilling should be used when hole depth > {0}'
+                self.drilling_notes.setText(notes.format(tool.toolDia * 4))
+            else:
+                self.drilling_notes.setText('')
 
         if not calculation.feedPerTooth:
             return
