@@ -1,7 +1,7 @@
 # FreeCAD Feeds and Speeds Calculator
 A FreeCAD Path Addon to help generate basic feeds and speeds for machining.  
 
-# Description
+## Description
 This addon when installed will appear in the Path Workbench toolbar menu, the purpose of the addon is to define initial machining parameters
 for the spindle speed and feedrate. This can be done by Spindle RPM or chipload (Feed Per Tooth).
 
