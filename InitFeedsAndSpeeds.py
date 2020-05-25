@@ -37,15 +37,37 @@ def updateMenu(workbench):
     print('Workbench loaded:', workbench)
 
     if workbench == 'PathWorkbench':
-        print('load the helper menu')
+
         mw = FreeCADGui.getMainWindow()
-        menu = mw.findChildren(QtGui.QMenu, "Supplemental Commands")[0]
-        action = QtGui.QAction(menu)
+        addonMenu = None
+
+        # Find the main path menu
+        pathMenu = mw.findChild(QtGui.QMenu, "&Path")
+
+        for menu in pathMenu.actions():
+            if menu.text() == "Path Addons":
+                # create a new addon menu
+                addonMenu = menu.menu()
+                break
+
+        if addonMenu is None:
+            addonMenu = QtGui.QMenu("Path Addons")
+            addonMenu.setObjectName("Path_Addons")
+
+            # Find the dressup menu entry
+            dressupMenu = mw.findChild(QtGui.QMenu, "Path Dressup")
+
+            #addonMenu.setTitle("Path Addons")
+            pathMenu.insertMenu(dressupMenu.menuAction(), addonMenu)
+
+        # create an action for this addon
+        action = QtGui.QAction(addonMenu)
         action.setText("Feeds and Speeds")
         action.setIcon(QtGui.QPixmap(getIcon('Path_FeedsAndSpeeds.svg')))
-        #action.setObjectName("Path")
         action.setStatusTip("Check Feeds and Speeds")
         action.triggered.connect(PathFeedsAndSpeedsGui.Show)
-        menu.addAction(action)
+
+        # append this addon to addon menu
+        addonMenu.addAction(action)
 
 FreeCADGui.getMainWindow().workbenchActivated.connect(updateMenu)
