@@ -34,9 +34,10 @@ def getIcon(iconName):
      return os.path.join( iconPath , iconName)
 
 def updateMenu(workbench):
-    print('Workbench loaded:', workbench)
 
     if workbench == 'PathWorkbench':
+    
+        print('Feeds and Speeds Addon loaded:', workbench)
 
         mw = FreeCADGui.getMainWindow()
         addonMenu = None
