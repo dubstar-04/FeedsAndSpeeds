@@ -568,6 +568,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>material_CB</tabstop>
+  <tabstop>hss_RB</tabstop>
+  <tabstop>cbd_RB</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>toolDia_LE</tabstop>
+  <tabstop>flutes_SB</tabstop>
+  <tabstop>FPT_SB</tabstop>
+  <tabstop>WOC_SP</tabstop>
+  <tabstop>DOC_SP</tabstop>
+  <tabstop>rpm_LE</tabstop>
+  <tabstop>drillDia_LE</tabstop>
+  <tabstop>drillFPT_SB</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
