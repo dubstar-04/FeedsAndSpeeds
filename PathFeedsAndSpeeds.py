@@ -253,7 +253,7 @@ class FSCalculation:
         # Convert to Hp
         Hp = Pm * 1.341
         #print("power", Pc, Pm, Hp)
-        return rpm, feed, Hp
+        return calc_rpm, feed, Hp
 
 
 
