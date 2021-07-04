@@ -1,0 +1,394 @@
+# Demonstration script to run an extended version of the Feed and Speed Calculator FreeCAD addon, 
+# which can be installed from the "rpm_override" branch at https://github.com/spanner888/FeedsAndSpeeds/tree/rpm_override
+#   Original code is https://github.com/dubstar-04/FeedsAndSpeeds
+
+# This scripts demonstrates original Feed and Speed Calculator capability
+# and also the added over ride limits set to match your CNC.
+
+# version 1.0
+
+
+# My Tool Library stuffed - have *some* c'drills & drills crosslinked - ie edite one changes the other...so never correct!
+#   ..prob was me hand editing lib....
+# So now want to automate  Tool Lib creation, but seems like can't easily automate PathToolLibrary's due to gui code popups,
+# so now decided just to create required tools directly in a PathJob 
+# and of course the associated ToolController for each tool with Feeds & Speeds etc....
+# based heavily on https://forum.freecadweb.org/viewtopic.php?f=15&t=53849
+# Future integrate with a Feeds and speeds calculator, such as 
+    # <a href="./memberlist.php?mode=viewprofile&amp;u=1642">dubstar-04</a>
+    # feeds and speeds add-on for the path workbench https://github.com/dubstar-04/FeedsAndSpeeds
+
+# ATM allows some simple auto changing of Feeds, Speeds for each tool in a range.
+# ATM Lotsa poor code, 
+    # eg if tool ype/shape file spelt wrong, you get adn exception with no helpfull info.
+    # No Tool resource icons added.
+
+
+# TODO test shapefile case sensistive names on linux...including fcstd or FCStd
+
+# ...or look/TEST IF CAN AUTOMATE WITH russ's changes
+# FYI: russ422 pathscript automation changes include (ie prob other key changes) def Create(base, template=None, useGui=True):
+
+import FreeCAD
+from PySide import QtGui
+from FreeCAD import Base, Rotation, Vector
+import Path
+
+import PathFeedsAndSpeeds
+
+# from PathScripts import PathToolBitLibraryCmd
+# Gui.runCommand('Path_ToolBitLibraryOpen',0)
+from PathScripts import PathJob, PathJobGui
+from PathScripts import PathPreferences, PathPreferencesAdvanced, PathPreferencesPathDressup, PathPreferencesPathJob, PathPost  
+from PathScripts import PathToolBit, PathToolController
+
+
+# helper stuff
+def initdoc(DOC_NAME):
+    DOC = FreeCAD.activeDocument()
+    if DOC is None:
+        FreeCAD.newDocument(DOC_NAME)
+        FreeCAD.setActiveDocument(DOC_NAME)
+        DOC = FreeCAD.activeDocument()
+    else:
+        clear_doc(DOC)
+
+    # clear the report window   https://forum.freecadweb.org/viewtopic.php?t=9825
+    mw=FreeCAD.Gui.getMainWindow()
+
+    c=mw.findChild(QtGui.QPlainTextEdit, "Python console")
+    c.clear()
+
+    r=mw.findChild(QtGui.QTextEdit, "Report view")
+    r.clear()
+
+    return (DOC)
+    
+def clear_doc(DOC):
+    """
+    Clear the active document deleting all the objects
+    """
+    for obj in DOC.Objects:
+        DOC.removeObject(obj.Name)
+
+def setview(DOC, VIEW):
+    """Rearrange View"""
+    DOC.recompute()
+    VIEW.viewAxometric()
+    VIEW.setAxisCross(True)
+    VIEW.fitAll()
+
+def makeCyl(DOC, cyl_r = 2, cyl_h = 20, cyl_angle = 360, 
+                    place_x = 0, place_y = 0, place_z = 0,
+                    rot_axis_x = 0, rot_axis_y = 0, rot_axis_z = 0, rot_angle = 0):
+    cyl = DOC.addObject('Part::Cylinder', 'oneCylinder')
+    cyl.Radius = cyl_r
+    cyl.Height = cyl_h
+    cyl.Angle = cyl_angle
+    cyl.Placement = FreeCAD.Placement(
+                        FreeCAD.Vector(place_x, place_y, place_z), 
+                        FreeCAD.Rotation(FreeCAD.Vector(rot_axis_x, rot_axis_y, rot_axis_z), rot_angle))
+    return (cyl)
+
+def makeCube(DOC, rect_x = 10, rect_y = 20, rect_z = 3, 
+                    place_x = 0, place_y = 0, place_z = 0,
+                    rot_axis_x = 0, rot_axis_y = 0, rot_axis_z = 0, rot_angle = 0):
+
+    box = DOC.addObject('Part::Box', 'Box')
+    box.Width = rect_x
+    box.Length = rect_y
+    box.Height = rect_z
+    box.Placement = FreeCAD.Placement(
+                        FreeCAD.Vector(place_x, place_y, place_z), 
+                        FreeCAD.Rotation(FreeCAD.Vector(rot_axis_x, rot_axis_y, rot_axis_z), rot_angle))
+    return box
+
+
+# Now functions related to Tools & ToolControllers
+def initJob(jobName, thisShape, template = None):
+    # job = PathJob.Create(jobName, [thisShape], template)
+    job = PathJob.Create('Job', [thisShape], template)
+    # job = PathJobGui.Create([thisShape], template)
+    job.ViewObject.Proxy = PathJobGui.ViewProvider(job.ViewObject)
+    job.Label = jobName
+    
+    return (job)
+
+# Based on FreeCAD TestPathToolController.py
+def createTool(name='t1', diameter=1.75, shape=None):
+    if PathPreferences.toolsUseLegacyTools():
+        return Path.Tool(name=name, diameter=diameter)
+    # attrs = {'shape': None, 'name': name, 'parameter': {'Diameter': diameter}, 'attribute': []}
+    attrs = {'shape': pathPrefs.GetString("LastPathToolShape") + '/' + shape + '.fcstd', 'name': name, 'parameter': {'Diameter': diameter}, 'attribute': []}
+    # tool = PathToolBit.Factory.CreateFromAttrs(attrs, name)
+    # toolShapePath = pathPrefs.GetString("LastPathToolShape") + '/' + shape + '.fcstd'
+    # print(toolShapePath)
+    # tool.BitShape = toolShapePath
+    return PathToolBit.Factory.CreateFromAttrs(attrs, name)
+
+# Based on FreeCAD PathJob:
+def addToolController(job, tc):  #<<<??skip pass in & create TC here as well??
+    group = job.Tools.Group
+    # PathLog.debug("addToolController(%s): %s" % (tc.Label, [t.Label for t in group]))
+    if tc.Name not in [str(t.Name) for t in group]:
+        # tc.setExpression('VertRapid', "%s.%s" % (job.setupSheet.expressionReference(), PathSetupSheet.Template.VertRapid))
+        # tc.setExpression('HorizRapid', "%s.%s" % (job .setupSheet.expressionReference(), PathSetupSheet.Template.HorizRapid))
+        job.Tools.addObject(tc)
+
+
+# so for auto tool creation - setup to create RANGE of tools, based on say changing dia...and auto adapt F&S for each
+# ...so also pass in base f&s as well as other tool prop
+# TODO add mac feed & rpm checks as well as proper F&S calcs or lookups
+# Imperial feed/rapid example '3 in/s' & metric '10 mm/s'
+
+# TODO FIXME: tc double click DOES open gui editor panel
+# ...toolbit d'click DOES NOT BUT  error is 
+# if name.startswith('.'):<class 'AttributeError'>: 'NoneType' object has no attribute 'startswith'
+# above error while trying to open edit panel??
+def createRangeToolControllers(toolNumberStart, toolCount, toolShape, 
+                                    diaStart, diaInc, 
+                                    vRapid, vFeedStart, vFeedInc, 
+                                    hRapid, hFeedStart, hFeedInc, 
+                                    spRpmStart, spRpmInc, spDir ='Forward'):
+    """ Create & add to the Job a range of ToolController (with rapids, feeds & speeds) & assoc ToolBits & properties
+
+        Tool diameters, feeds and speed are incremented as specified for each tool.
+        In general increasing tool diameter would require decreasing feeds or speeds or vice verse.
+        So use positive increment for Tool dia and negative for feeds & speeds or vice versa."""                                                        
+
+    for toolIndex in range (toolCount):
+        
+        # create Tool start dia = 2.5, incrementing 1.5mmm for example
+        toolDia  = diaStart + toolIndex*diaInc
+        # Naming this way to avoid trailing numbers being auto renamed by FC
+        t  = createTool("T%04d_%s" %(100*toolDia, toolShape), toolDia, toolShape)
+        print("created toolbit: T%04d_%s" %(100*toolDia, toolShape))
+        
+        # Now for ToolController
+        tc = PathToolController.Create("TC%02d_" % toolIndex, t)
+        # tcProps = PathToolController.ToolControllerTemplate
+        tc.Label = "TC%04d_%s" %(100*toolDia, toolShape)
+        tc.ToolNumber = toolNumberStart + toolIndex
+        
+        tc.VertRapid = vRapid/60
+        # tc.VertRapid = round(tc.VertRapid, 2)
+        
+        tc.VertFeed =  (vFeedStart + toolIndex * vFeedInc)/60
+        # tc.VertFeed = round(tc.VertFeed, 2)
+        
+        tc.HorizRapid = hRapid/60
+        # tc.HorizRapid = round(tc.HorizRapid, 2)
+        
+        tc.HorizFeed = (hFeedStart + toolIndex * hFeedInc)/60
+        # tc.HorizFeed = round(tc.HorizFeed, 2)
+        
+        tc.SpindleSpeed = spRpmStart + toolIndex * spRpmInc
+        tc.SpindleDir = spDir
+        addToolController(job, tc)
+
+def createRangeTcUsingFsCalc(toolNumberStart, toolCount, toolShape, 
+                                diaStart, diaInc, 
+                                vRapid, vFeedStart, vFeedInc, 
+                                hRapid, spDir ='Forward'):
+    """ Create & add to the Job a range of ToolController (with rapids, feeds & speeds) & assoc ToolBits & properties
+
+        Tool diameters, feeds and speed are incremented as specified for each tool.
+        In general increasing tool diameter would require decreasing feeds or speeds or vice verse.
+        So use positive increment for Tool dia and negative for feeds & speeds or vice versa."""                                                        
+
+    for toolIndex in range (toolCount):
+
+        # use Feed and Speed Calculator FreeCAD addon to calc updated rpm & feed
+        # Now Change defaults to suit your needs. See initFsDefaults() for details.
+        # Some examples:-
+        tool.toolDia = diaStart + toolIndex*diaInc
+        tool.flutes = 1
+        fsAddon.material = "Aluminium (6061)"
+
+        # Optional print of all the inputs
+        # fsAddon.printInputs(tool, limits)
+
+        # Original calculator behaviour, no SCRIPTED over rides
+        # rpm, feed, Hp = fsAddon.calculate(tool) 
+        # print("\t rpm %d, feed %d, Hp  %.2f & Watts  %d" % (rpm, feed, Hp, Hp*745.6999))
+
+        # auto override feed, rpm & power, based on cnc limit settings
+        fsAddon.printInputs(tool, limits)
+        rpm, feed, Hp = fsAddon.calcWithAutoOverrides(tool, limits)
+        # print("\t rpm %d, feed %d, Hp  %.2f & Watts  %d" % (rpm, feed, Hp, Hp*745.6999))
+       
+        
+        # Naming this way to avoid trailing numbers being auto renamed by FC
+        t  = createTool("T%04d_%s" %(100*tool.toolDia, toolShape), tool.toolDia, toolShape)
+        # TODO add number tool flutes & anything else???
+        print("created toolbit: T%04d_%s" %(100*tool.toolDia, toolShape))
+        
+        # Now for ToolController
+        tc = PathToolController.Create("TC%02d_" % toolIndex, t)
+        # tcProps = PathToolController.ToolControllerTemplate
+        tc.Label = "TC_FS_%04d_%s" %(100*tool.toolDia, toolShape)
+        tc.ToolNumber = toolNumberStart + toolIndex
+        
+        tc.VertRapid = vRapid/60
+        # tc.VertRapid = round(tc.VertRapid, 2)
+        
+        tc.VertFeed =  (vFeedStart + toolIndex * vFeedInc)/60
+        # tc.VertFeed = round(tc.VertFeed, 2)
+        
+        tc.HorizRapid = hRapid/60
+        # tc.HorizRapid = round(tc.HorizRapid, 2)
+        
+        # feed from Feed and Speed Calculator FreeCAD addon, 
+        tc.HorizFeed = feed/60         # divide by 60 for mm/min vs mm/s
+        # tc.HorizFeed = round(tc.HorizFeed, 2)
+        
+        # SpindleSpeed from Feed and Speed Calculator FreeCAD addon
+        tc.SpindleSpeed = rpm
+        tc.SpindleDir = spDir
+        
+        jobTC = addToolController(job, tc)
+# ------------------ setup stuff -----------------------------------
+DOC_NAME = "scripted_creation_Tool_Controllers"
+DOC = initdoc(DOC_NAME)
+VIEW = FreeCAD.Gui.ActiveDocument.ActiveView
+
+# init of PathFeedsAndSpeeds calculator
+fsAddon = PathFeedsAndSpeeds.FSCalculation()
+# Easy set defaults, situation specific then set in calls to createRangeToolControllers
+tool, limits = fsAddon.initDefaults()
+
+# create solid for stock/model & place it as desired
+stock1 = makeCube(DOC, 2*156.5, 2*155, 19)
+stock1.Placement.Base = Vector(-156.5, -155, 0)
+# Job to add ToolController to...
+job = initJob("tlaJob1", stock1, None)
+
+# Get path to Tool Shape files
+pathPrefs=FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Path")
+print("LastPathToolBit %s" % pathPrefs.GetString("LastPathToolBit"))
+toolspath = pathPrefs.GetString("LastPathToolBit")
+print("LastPathToolShape %s" % pathPrefs.GetString("LastPathToolShape"))
+print('--------------')
+# ----------------- end setup ---------------------------------------
+
+# NB feed/rapids are mm/min
+# tool shapes are case sensitive, as are spindle directions
+createRangeToolControllers(5, 4, 'endmill', 3.0, 1.5,  200, 100, -10,
+                                                        800, 400, -50,
+                                                        12000, 0, 'Reverse')
+createRangeTcUsingFsCalc(5, 4, 'endmill', 
+                                3.0, 1.5,  
+                                200, 100, -10,
+                                800, 'Reverse')
+# createRangeToolControllers(useFsCalc, 15, 2, 'drill', 4.0, 1.0,  200, 100, -10,
+                                                        # 800, 400, -50,
+                                                        # 12000, 0, 'Forward')
+# createRangeToolControllers(useFsCalc, 25, 3, 'centredrill', 2.0, 1.1,  200, 100, -10,
+                                                        # 800, 400, -50,
+                                                        # 12000, 0, 'Forward')
+                                                        
+# endmill
+# drill                                                        
+# centredrill   <<<TODO FIXME fails {NOT windows 8.3 length as slittingsaw & thread-mill are ok!!} and code has NO test/checks!!!!
+                # *appears* I added ...this file NOT in mpd/path/tools/shapes!!!!!
+                # so how to add another shape??
+                # maybe, but not too likely issue linked/triggered to/by the "crosslinked" centredrill/drill edit issue.
+                        # - esp as NOT using tool from library...creating new tool & TC. ONLY use exisitng shape.
+                # >>>NB: crash is either in:-
+                            # PathToolBit.Factory.CreateFromAttrs(attrs, name)
+                            # or the rerun, as print immed before is printed, 
+                                            # but NOT print back in main createRangeToolControllers code that called createTool
+                                            
+                # ALSO triggered by:- nonsensename, abc, endmil (ie missing one "l"), drll (missing "i")
+                # so instead try create with shape = None, then afetr set Tool.bitShape prop(check prop name)
+                
+                # ++ Test (creates path, sim AND bCNC) variety of tools in a qpJob, including test large tool in smll hole/slot....
+                    # ...this unrelated to centredrill issue!
+                # test above after creating new fc user prefs & dflt tools + create a cdrill shape
+# chamfer
+# ballend
+# bullnose
+# v-bit
+# slittingsaw
+# probe
+# thread-mill
+
+DOC.recompute()
+setview(DOC, VIEW)
+print("--- done...but if does not look correct, close doc & run again...been having occasional 1st run issues ---")
+
+
+
+
+
+
+# -------------------------------------------------------------------
+# method to obtain information from a tool file saved on disk, a bit rough
+# toolspath eg "/home/user/.FreeCAD/Tools/Bit/" 
+
+# T1 = PathToolBit.Declaration(toolspath + '/' + "1mm_Endmill.fctb")
+
+# TBits
+    # 1+ Libs
+    # 1+ ToolBits
+    # 1+ shapes
+
+# TestPathToolController.py
+    # create Tool, tehn create TC from tool
+    # create TC from template
+    # assert values & round trip values
+    
+# TestPathToolBit.py
+    # check 3xdir/paths
+    # print dir tree
+    # PathToolBit heap of tests about finding tool{Bit/shape/lib} by name/shape/dir.......
+    
+# TestPathTool.py
+    # create Path.Tool
+    # add atribs, assert OK & ditto for round trip
+    
+# TestPathTooltable.py
+    # ToolTable = OLD style??
+
+
+# Job & TC
+
+
+# ------------------- ex onekk
+# tc0 = job.ToolController[0]
+# tc0.Label = "MyTC1"
+# tc0.setExpression('HorizRapid', None)
+# tc0.HorizRapid = "15 mm/s"
+# tc0.setExpression('VertRapid', None)
+# tc0.VertRapid = "2 mm/s"
+
+# tct1 = tc0.Tool
+# tct1.Label = T1['name']
+# tct1.BitShape = shapepath + T1['shape']
+# tct1.CuttingEdgeHeight = T1['parameter']['CuttingEdgeHeight']
+# tct1.Diameter = T1['parameter']['Diameter']
+# tct1.Length = T1['parameter']['Length']
+# tct1.ShankDiameter = T1['parameter']['ShankDiameter']
+# tct1.recompute()
+# tct1.ViewObject.Visibility = True
+
+# tct1.recompute()
+# tc0.recompute()
+# -------------------------------------------------------------------
+
+# tooldata from the tool file is composed like :
+# so the tricks in T1[][] to extract the parameters to put into the proper field of the TC.Tool 
+# {'version': 2, 'name': '3mm Endmill', 'shape': 'endmill.fcstd', 'parameter': {'CuttingEdgeHeight': '17,00 mm', 'Diameter': '3,00 mm', 'Length': '50,00 mm', 'ShankDiameter': '3,17 mm'}, 'attribute': {}}
+
+# set this expression to 'None' and then assign values in the proper format Note the speed units.
+# tc0.setExpression('HorizRapid', None)
+# tc0.HorizRapid = "15 mm/s"
+# tc0.setExpression('VertRapid', None)
+# tc0.VertRapid = "2 mm/s"
+
+# other doubt is the file property of the ToolController.Tool part.
+# But for now it seems quite useable to make some scripting.
+# Main concerns for now are the tool shape and to find a way to apply the Tags dressup to a profile.
+#------------------- ex onekk
+
+
