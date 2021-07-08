@@ -9,7 +9,11 @@ for the spindle speed and feedrate. This can be done by Spindle RPM or chipload 
 * Select workpiece material
 * Select Tool Material
 * Set machining parameters
-
+* Scripting only features (not yet added to GUI)
+  * Ability to automaticaly over ride outputs to limits set to match your CNC.
+  * Optional print of all inputs
+  * Script example included in examples directory
+ 
 ## Requirements
 * FreeCAD v0.19  
 * Python3  
