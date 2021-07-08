@@ -223,6 +223,8 @@ class FSCalculation:
         
         return "-"
 
+    def set_material(self, material):
+        self.material = material
  
     def calculate(self, tool):
 
