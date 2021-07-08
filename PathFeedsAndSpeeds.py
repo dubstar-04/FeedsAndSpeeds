@@ -212,12 +212,24 @@ class FSCalculation:
         self.WOC = None
         self.DOC = None
         self.limits = None
+
+    def get_surface_speed(self):
+        print("material", self.material)
+        if self.material:
+            materials = load_materials()
+            surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
+            print("found ss:", surfaceSpeed)
+            return surfaceSpeed
+        
+        return "-"
+
  
     def calculate(self, tool):
 
         print('calculate for opType: ', self.opType)
         materials = load_materials()
-        surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
+
+        surfaceSpeed = self.get_surface_speed()
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         ## C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth) 
