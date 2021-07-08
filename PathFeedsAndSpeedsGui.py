@@ -182,7 +182,7 @@ class FeedSpeedPanel():
         self.quit()
         
     def quit(self):
-        FreeCADGui.Control.closeDialog(self)
+        self.form.close()
 
     def reset(self):
         pass
