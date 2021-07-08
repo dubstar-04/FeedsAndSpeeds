@@ -5,6 +5,9 @@ import FreeCAD,FreeCADGui
 import os
 from PySide import QtGui, QtCore
 from PySide.QtGui import QApplication, QDialog, QMainWindow
+
+import PathScripts.PathUtils as PathUtils
+
 import PathFeedsAndSpeeds
 
 dir = os.path.dirname(__file__)
@@ -41,34 +44,100 @@ class FeedSpeedPanel():
     def setup_ui(self):    
     
         ### load materials
-        materials = PathFeedsAndSpeeds.load_materials()
+        # materials = PathFeedsAndSpeeds.load_materials()
         for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
-            self.material_CB.addItem(material)
-
-        ### set tool material
-        self.hss_RB.setChecked(True)    
+            self.form.material_CB.addItem(material)  
 
         ### load widget data
+        self.set_tool_properties(self.toolDia, 2, self.toolDia * 0.01, "HSS")
+
+        self.load_tools()
+        self.load_tool_properties()
+        self.set_tool_material()
+        self.set_surface_speed()
+
+    def set_tool_properties(self, dia, flutes, chipload, material):
+        self.form.toolDia_LE.setText(str(dia))
+        self.form.flutes_SB.setValue(flutes)
+        self.form.FPT_SB.setValue(chipload)
+
+        self.form.WOC_SP.setText(str(round(dia * 0.2, 2)))
+        self.form.DOC_SP.setText(str(dia))
+
+        if material == "HSS":
+            self.form.hss_RB.setChecked(True)
+        elif material == "Carbide":
+            self.form.cbd_RB.setChecked(True) 
+
+    def set_surface_speed(self):
+        material = self.form.material_CB.currentText()
+
+        self.calculation.set_material(material)
+
+        ss = self.calculation.get_surface_speed()
+        print("Surface Speed:", ss, material)
+
+        self.form.ss_LE.setText(str(ss))
+        self.calculate
+
+    def set_tool_material(self):
+        self.calculation.ss_by_material = "ss_hss" if self.form.hss_RB.isChecked() else "ss_cbd"
+
+    def load_tools(self):
+        job = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")[0]
+        # self.form.toolController_CB.addItem('None')
+        for idx, tc in enumerate(job.Tools.Group):					
+            self.form.toolController_CB.addItem(tc.Label)
+
+    def load_tool_properties(self):
+        tc = self.get_tool_controller()
+
+        if tc:
+            tool = tc.Tool
+            dia = tool.Diameter
+            flutes = tool.Flutes
+            material = tool.Material
+            chipload = tool.Chipload
+            self.set_tool_properties(dia, flutes, chipload, material)
+            print("tool props:", dia, flutes, material, chipload)
+
+    def get_tool_controller(self):
+        job = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")[0]
+        tcStr = self.form.toolController_CB.currentText()
+        for tc in job.Tools.Group:
+            if tc.Label == tcStr:
+                return tc
+
+        return None
+
+    def update_tool_controller(self):
+        tc = self.get_tool_controller()
+
+        if tc:
+            rpm = self.form.rpm_result.text()
+            feed = self.form.feed_result.text()
+            #TODO: Add a confirmation dialog
+            tc.HorizFeed = feed
+            tc.SpindleSpeed = float(rpm)
 
     def calculate(self):
+
+        if self.calculation.material is None:
+            return
+
         tool = PathFeedsAndSpeeds.Tool()
-        calculation = PathFeedsAndSpeeds.FSCalculation()
 
-        if not self.rpm_LE.text() == "":
-            self.rpm_result.setEnabled(False)
+        self.calculation.rpm_overide = self.form.rpm_LE.text()
+
+        if not self.form.rpm_LE.text() == "":
+            self.form.rpm_result.setEnabled(False)
         else:
-            self.rpm_result.setEnabled(True)
+            self.form.rpm_result.setEnabled(True)
 
-        if self.tabWidget.currentIndex() == 0:
+        #if self.tabWidget.currentIndex() == 0:
             # calculate for milling
-            tool.toolDia = float(self.toolDia_LE.text())
-            tool.flutes = self.flutes_SB.value()
-            calculation.feedPerTooth = float(self.FPT_SB.value())
-            calculation.WOC = FreeCAD.Units.Quantity(self.WOC_SP.text())
-            calculation.DOC = FreeCAD.Units.Quantity(self.DOC_SP.text())         
-            calculation.toolWear = 1.1 ## Tool Wear pg: 1048
-            calculation.ss_by_material = "ss_hss" if self.hss_RB.isChecked() else "ss_cbd"
-            calculation.opType = 'Milling'
+        tool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
+        tool.flutes = self.form.flutes_SB.value()
         self.calculation.feedPerTooth = float(self.form.FPT_SB.value())
         self.calculation.WOC = FreeCAD.Units.Quantity(self.form.WOC_SP.text())
         self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())         
