@@ -15,50 +15,27 @@ class FeedSpeedPanel():
     def __init__(self):
         #Build GUI
         self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
-        self.tabWidget = self.form.tabWidget
-        self.material_CB = self.form.material_CB
-        self.hss_RB = self.form.hss_RB
-        self.cbd_RB = self.form.cbd_RB
-        #####################################
-        ##           Milling Page          ##
-        #####################################
-        self.toolDia_LE = self.form.toolDia_LE
-        self.flutes_SB = self.form.flutes_SB
-        self.FPT_SB = self.form.FPT_SB
-        self.WOC_SP = self.form.WOC_SP
-        self.DOC_SP = self.form.DOC_SP
-        #####################################
-        ##           Drilling Page         ##
-        #####################################
-        self.drillDia_LE = self.form.drillDia_LE
-        self.drillFPT_SB = self.form.drillFPT_SB
-        self.drilling_notes = self.form.drilling_notes
-        #####################################
-        ##             Results             ##
-        #####################################
-        self.rpm_result = self.form.rpm_result
-        self.rpm_LE = self.form.rpm_LE
-        self.feed_result= self.form.feed_result
-        self.hp_result = self.form.hp_result
+
         ### Set Defaults
         self.toolDia = 6
-        ### Init 
+
+        ### Init
         self.setup_ui()
         self.calculate()
 
         ### connect
-        self.tabWidget.currentChanged.connect(self.calculate)
-        self.material_CB.currentIndexChanged.connect(self.calculate)
-        self.hss_RB.toggled.connect(self.calculate)
-        self.cbd_RB.toggled.connect(self.calculate)
-        self.toolDia_LE.textChanged.connect(self.calculate)
-        self.flutes_SB.valueChanged.connect(self.calculate)
-        self.FPT_SB.valueChanged.connect(self.calculate)
-        self.WOC_SP.textChanged.connect(self.calculate)
-        self.DOC_SP.textChanged.connect(self.calculate)
-        self.rpm_LE.textChanged.connect(self.calculate)
-        self.drillDia_LE.textChanged.connect(self.calculate)
-        self.drillFPT_SB.valueChanged.connect(self.calculate)
+        self.form.material_CB.currentIndexChanged.connect(self.set_surface_speed)
+        self.form.hss_RB.toggled.connect(self.calculate)
+        self.form.cbd_RB.toggled.connect(self.calculate)
+        self.form.toolDia_LE.textChanged.connect(self.calculate)
+        self.form.flutes_SB.valueChanged.connect(self.calculate)
+        self.form.FPT_SB.valueChanged.connect(self.calculate)
+        self.form.WOC_SP.textChanged.connect(self.calculate)
+        self.form.DOC_SP.textChanged.connect(self.calculate)
+        self.form.rpm_LE.textChanged.connect(self.calculate)
+        self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
+        self.form.update_PB.clicked.connect(self.update_tool_controller)
+        self.form.close_PB.clicked.connect(self.quit)
 
     def setup_ui(self):    
     
@@ -71,19 +48,10 @@ class FeedSpeedPanel():
         self.hss_RB.setChecked(True)    
 
         ### load widget data
-        self.toolDia_LE.setText(str(self.toolDia))
-        self.flutes_SB.setValue(2)
-        self.FPT_SB.setValue(self.toolDia * 0.01)  
-        self.WOC_SP.setText(str(round(self.toolDia * 0.2, 2)))
-        self.DOC_SP.setText(str(self.toolDia))
-        self.drillDia_LE.setText(str(self.toolDia))
-        self.drillFPT_SB.setValue(self.toolDia * 0.01)
 
     def calculate(self):
         tool = PathFeedsAndSpeeds.Tool()
         calculation = PathFeedsAndSpeeds.FSCalculation()
-        calculation.material = self.material_CB.currentText()
-        calculation.rpm_overide = self.rpm_LE.text()
 
         if not self.rpm_LE.text() == "":
             self.rpm_result.setEnabled(False)
@@ -119,9 +87,9 @@ class FeedSpeedPanel():
 
         rpm, feed, Hp = calculation.calculate(tool)
 
-        self.rpm_result.setText(str(rpm))
-        self.feed_result.setText(str(feed) + " mm/min")
-        self.hp_result.setText(str(round(Hp, 2)) + " hp")
+        self.form.rpm_result.setText(str(rpm))
+        self.form.feed_result.setText(str(feed) + " mm/min")
+        self.form.hp_result.setText(str(round(Hp, 2)) + " hp")
 
     def show(self):
         self.form.show()
