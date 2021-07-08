@@ -20,6 +20,7 @@ class FeedSpeedPanel():
         self.toolDia = 6
 
         ### Init
+        self.calculation = PathFeedsAndSpeeds.FSCalculation()
         self.setup_ui()
         self.calculate()
 
@@ -68,6 +69,14 @@ class FeedSpeedPanel():
             calculation.toolWear = 1.1 ## Tool Wear pg: 1048
             calculation.ss_by_material = "ss_hss" if self.hss_RB.isChecked() else "ss_cbd"
             calculation.opType = 'Milling'
+        self.calculation.feedPerTooth = float(self.form.FPT_SB.value())
+        self.calculation.WOC = FreeCAD.Units.Quantity(self.form.WOC_SP.text())
+        self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())         
+        self.calculation.toolWear = 1.1 ## Tool Wear pg: 1048
+        self.set_tool_material()
+        self.calculation.opType = 'Milling'
+        
+        """         
         else:
             # calculate for drilling
             tool.toolDia = float(self.drillDia_LE.text())
@@ -80,12 +89,13 @@ class FeedSpeedPanel():
                 notes = 'Note: Peck drilling should be used when hole depth > {0}'
                 self.drilling_notes.setText(notes.format(tool.toolDia * 4))
             else:
-                self.drilling_notes.setText('')
+                self.drilling_notes.setText('') 
+        """
 
-        if not calculation.feedPerTooth:
+        if not self.calculation.feedPerTooth:
             return
 
-        rpm, feed, Hp = calculation.calculate(tool)
+        rpm, feed, Hp = self.calculation.calculate(tool)
 
         self.form.rpm_result.setText(str(rpm))
         self.form.feed_result.setText(str(feed) + " mm/min")
