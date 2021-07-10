@@ -84,10 +84,11 @@ class FeedSpeedPanel():
         self.calculation.ss_by_material = "ss_hss" if self.form.hss_RB.isChecked() else "ss_cbd"
 
     def load_tools(self):
-        job = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")[0]
+        jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         # self.form.toolController_CB.addItem('None')
-        for idx, tc in enumerate(job.Tools.Group):					
-            self.form.toolController_CB.addItem(tc.Label)
+        for job in jobs:
+            for idx, tc in enumerate(job.Tools.Group):					
+                self.form.toolController_CB.addItem(tc.Label)
 
     def load_tool_properties(self):
         tc = self.get_tool_controller()
@@ -102,11 +103,12 @@ class FeedSpeedPanel():
             print("tool props:", dia, flutes, material, chipload)
 
     def get_tool_controller(self):
-        job = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")[0]
+        jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         tcStr = self.form.toolController_CB.currentText()
-        for tc in job.Tools.Group:
-            if tc.Label == tcStr:
-                return tc
+        for job in jobs:
+            for tc in job.Tools.Group:
+                if tc.Label == tcStr:
+                    return tc
 
         return None
 
