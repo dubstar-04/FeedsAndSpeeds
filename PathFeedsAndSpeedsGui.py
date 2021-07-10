@@ -193,5 +193,10 @@ def Show():
         QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "No Active Document")
         return
 
+    jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
+    if len(jobs) == 0:
+        QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "No Path Job in Current Document")
+        return
+
     panel = FeedSpeedPanel()
     panel.show()
