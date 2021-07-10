@@ -167,10 +167,11 @@ class FeedSpeedPanel():
             return
 
         rpm, feed, Hp = self.calculation.calculate(tool)
+        watts = Hp * 745.69
 
         self.form.rpm_result.setText(str(rpm))
         self.form.feed_result.setText(str(feed) + " mm/min")
-        self.form.hp_result.setText(str(round(Hp, 2)) + " hp")
+        self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
         self.form.show()
