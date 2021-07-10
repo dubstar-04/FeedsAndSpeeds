@@ -61,7 +61,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="toolController_CB"/>
+       <widget class="QComboBox" name="toolController_CB">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tool Controller&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_6">
@@ -115,6 +119,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="flutes_SB">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of flutes or cutting edges&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -155,6 +162,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="hss_RB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;High Speed Steel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>HSS</string>
           </property>
@@ -162,6 +172,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="cbd_RB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;carbide&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>Carbide</string>
           </property>
@@ -178,7 +191,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Positive extends the beginning of the path, negative shortens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tool Diameter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
@@ -253,7 +266,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string/>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;stepover or width of cut&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
          <string/>
@@ -297,7 +310,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string/>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;stepdown or depth of cut&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
@@ -306,6 +319,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QDoubleSpinBox" name="FPT_SB">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;chipload or feed per tooth. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="decimals">
          <number>3</number>
         </property>
@@ -358,7 +374,11 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="material_CB"/>
+       <widget class="QComboBox" name="material_CB">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;material of stock&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_11">
@@ -425,7 +445,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Positive extends the beginning of the path, negative shortens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;surface speed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
          <string>Overide</string>
@@ -444,7 +464,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Positive extends the beginning of the path, negative shortens.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;spindle speed or rpm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
          <string>Overide</string>
@@ -606,6 +626,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_15">
        <item>
         <widget class="QPushButton" name="update_PB">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;apply the feed and spindle speed to the selected tool controller&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Update TC</string>
          </property>
@@ -613,6 +636,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="close_PB">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;close the dialog&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Close</string>
          </property>
