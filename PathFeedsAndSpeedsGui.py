@@ -3,6 +3,7 @@
 
 import FreeCAD, FreeCADGui
 import os
+from PySide import QtGui
 
 import PathFeedsAndSpeeds
 
@@ -188,5 +189,9 @@ class FeedSpeedPanel():
 
 
 def Show():
+    if not FreeCAD.ActiveDocument:
+        QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "No Active Document")
+        return
+
     panel = FeedSpeedPanel()
     panel.show()
