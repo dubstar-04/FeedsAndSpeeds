@@ -6,16 +6,14 @@ This addon when installed will appear in the Path Workbench toolbar menu, the pu
 for the spindle speed and feedrate. This can be done by Spindle RPM or chipload (Feed Per Tooth).
 
 ## Features
+* Select path tool controller
 * Select workpiece material
 * Select Tool Material
 * Set machining parameters
-* Scripting only features (not yet added to GUI)
-  * Ability to automaticaly over ride outputs to limits set to match your CNC.
-  * Optional print of all inputs
-  * Script example included in examples directory
+* write calculated feedrate and spindle speed to the selected tool controller
  
 ## Requirements
-* FreeCAD v0.19  
+* FreeCAD v0.19 or FreeCAD v0.20
 * Python3  
 * Qt5
 
