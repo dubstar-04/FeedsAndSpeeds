@@ -1,33 +1,30 @@
 # Feed and Speed Calculator
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
-import FreeCAD,FreeCADGui
+import FreeCAD, FreeCADGui
 import os
-from PySide import QtGui, QtCore
-from PySide.QtGui import QApplication, QDialog, QMainWindow
-
-import PathScripts.PathUtils as PathUtils
 
 import PathFeedsAndSpeeds
 
 dir = os.path.dirname(__file__)
 ui_name = "PathFeedsAndSpeedsGui.ui"
-path_to_ui = dir + "/" +ui_name
+path_to_ui = dir + "/" + ui_name
+
 
 class FeedSpeedPanel():
     def __init__(self):
-        #Build GUI
+        # Build GUI
         self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
 
-        ### Set Defaults
+        # Set Defaults
         self.toolDia = 6
 
-        ### Init
+        # Init
         self.calculation = PathFeedsAndSpeeds.FSCalculation()
         self.setup_ui()
         self.calculate()
 
-        ### connect
+        # connect
         self.form.material_CB.currentIndexChanged.connect(self.set_surface_speed)
         self.form.hss_RB.toggled.connect(self.calculate)
         self.form.cbd_RB.toggled.connect(self.calculate)
@@ -41,14 +38,13 @@ class FeedSpeedPanel():
         self.form.update_PB.clicked.connect(self.update_tool_controller)
         self.form.close_PB.clicked.connect(self.quit)
 
-    def setup_ui(self):    
-    
-        ### load materials
+    def setup_ui(self):
+        # load materials
         # materials = PathFeedsAndSpeeds.load_materials()
         for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
-            self.form.material_CB.addItem(material)  
+            self.form.material_CB.addItem(material)
 
-        ### load widget data
+        # load widget data
         self.set_tool_properties(self.toolDia, 2, self.toolDia * 0.01, "HSS")
 
         self.load_tools()
@@ -67,7 +63,7 @@ class FeedSpeedPanel():
         if material == "HSS":
             self.form.hss_RB.setChecked(True)
         elif material == "Carbide":
-            self.form.cbd_RB.setChecked(True) 
+            self.form.cbd_RB.setChecked(True)
 
     def set_surface_speed(self):
         material = self.form.material_CB.currentText()
@@ -87,7 +83,7 @@ class FeedSpeedPanel():
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         # self.form.toolController_CB.addItem('None')
         for job in jobs:
-            for idx, tc in enumerate(job.Tools.Group):					
+            for idx, tc in enumerate(job.Tools.Group):
                 self.form.toolController_CB.addItem(tc.Label)
 
     def load_tool_properties(self):
@@ -118,7 +114,7 @@ class FeedSpeedPanel():
         if tc:
             rpm = self.form.rpm_result.text()
             feed = self.form.feed_result.text()
-            #TODO: Add a confirmation dialog
+            # TODO: Add a confirmation dialog
             tc.HorizFeed = feed
             tc.SpindleSpeed = float(rpm)
 
@@ -136,18 +132,18 @@ class FeedSpeedPanel():
         else:
             self.form.rpm_result.setEnabled(True)
 
-        #if self.tabWidget.currentIndex() == 0:
+        # if self.tabWidget.currentIndex() == 0:
             # calculate for milling
         tool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
         tool.flutes = self.form.flutes_SB.value()
         self.calculation.feedPerTooth = float(self.form.FPT_SB.value())
         self.calculation.WOC = FreeCAD.Units.Quantity(self.form.WOC_SP.text())
-        self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())         
-        self.calculation.toolWear = 1.1 ## Tool Wear pg: 1048
+        self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())
+        self.calculation.toolWear = 1.1  # Tool Wear pg: 1048
         self.set_tool_material()
         self.calculation.opType = 'Milling'
-        
-        """         
+
+        """
         else:
             # calculate for drilling
             tool.toolDia = float(self.drillDia_LE.text())
@@ -160,7 +156,7 @@ class FeedSpeedPanel():
                 notes = 'Note: Peck drilling should be used when hole depth > {0}'
                 self.drilling_notes.setText(notes.format(tool.toolDia * 4))
             else:
-                self.drilling_notes.setText('') 
+                self.drilling_notes.setText('')
         """
 
         if not self.calculation.feedPerTooth:
@@ -183,19 +179,14 @@ class FeedSpeedPanel():
 
     def accept(self):
         self.quit()
-        
+
     def quit(self):
         self.form.close()
 
     def reset(self):
         pass
 
+
 def Show():
     panel = FeedSpeedPanel()
     panel.show()
-
-
-
-
-
-
