@@ -632,9 +632,19 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>material_CB</tabstop>
-  <tabstop>cbd_RB</tabstop>
+  <tabstop>toolController_CB</tabstop>
+  <tabstop>toolDia_LE</tabstop>
   <tabstop>flutes_SB</tabstop>
+  <tabstop>hss_RB</tabstop>
+  <tabstop>cbd_RB</tabstop>
+  <tabstop>FPT_SB</tabstop>
+  <tabstop>WOC_SP</tabstop>
+  <tabstop>DOC_SP</tabstop>
+  <tabstop>material_CB</tabstop>
+  <tabstop>ss_LE</tabstop>
+  <tabstop>rpm_LE</tabstop>
+  <tabstop>update_PB</tabstop>
+  <tabstop>close_PB</tabstop>
  </tabstops>
  <resources/>
  <connections/>
