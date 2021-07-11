@@ -4,7 +4,6 @@
 import FreeCAD, FreeCADGui
 import os
 from PySide import QtGui
-
 import PathFeedsAndSpeeds
 
 dir = os.path.dirname(__file__)
@@ -47,6 +46,11 @@ class FeedSpeedPanel():
 
         # load widget data
         self.set_tool_properties(self.toolDia, 2, self.toolDia * 0.01, "HSS")
+
+        # set input validation
+        self.onlyInt = QtGui.QIntValidator()
+        self.form.ss_LE.setValidator(self.onlyInt)
+        self.form.rpm_LE.setValidator(self.onlyInt)
 
         self.load_tools()
         self.load_tool_properties()

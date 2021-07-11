@@ -122,6 +122,9 @@
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of flutes or cutting edges&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
@@ -192,6 +195,9 @@
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tool Diameter&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
@@ -468,6 +474,9 @@
         </property>
         <property name="placeholderText">
          <string>Overide</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
