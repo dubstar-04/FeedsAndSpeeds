@@ -25,7 +25,7 @@ class FeedSpeedPanel():
         self.calculate()
 
         # connect
-        self.form.material_CB.currentIndexChanged.connect(self.set_surface_speed)
+        self.form.material_CB.currentIndexChanged.connect(self.set_material)
         self.form.hss_RB.toggled.connect(self.calculate)
         self.form.cbd_RB.toggled.connect(self.calculate)
         self.form.toolDia_LE.textChanged.connect(self.calculate)
@@ -33,6 +33,7 @@ class FeedSpeedPanel():
         self.form.FPT_SB.valueChanged.connect(self.calculate)
         self.form.WOC_SP.textChanged.connect(self.calculate)
         self.form.DOC_SP.textChanged.connect(self.calculate)
+        self.form.ss_LE.textChanged.connect(self.calculate)
         self.form.rpm_LE.textChanged.connect(self.calculate)
         self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
         self.form.update_PB.clicked.connect(self.update_tool_controller)
@@ -55,7 +56,7 @@ class FeedSpeedPanel():
         self.load_tools()
         self.load_tool_properties()
         self.set_tool_material()
-        self.set_surface_speed()
+        self.set_material()
 
     def set_tool_properties(self, dia, flutes, chipload, material):
         self.form.toolDia_LE.setText(str(dia))
@@ -70,14 +71,10 @@ class FeedSpeedPanel():
         elif material == "Carbide":
             self.form.cbd_RB.setChecked(True)
 
-    def set_surface_speed(self):
+    def set_material(self):
         material = self.form.material_CB.currentText()
-
         self.calculation.set_material(material)
-
         ss = self.calculation.get_surface_speed()
-        print("Surface Speed:", ss, material)
-
         self.form.ss_LE.setText(str(ss))
         self.calculate
 
@@ -133,6 +130,7 @@ class FeedSpeedPanel():
         tool = PathFeedsAndSpeeds.Tool()
 
         self.calculation.rpm_overide = self.form.rpm_LE.text()
+        surfaceSpeed = float(self.form.ss_LE.text())
 
         if not self.form.rpm_LE.text() == "":
             self.form.rpm_result.setEnabled(False)
@@ -150,7 +148,7 @@ class FeedSpeedPanel():
         if not self.calculation.feedPerTooth:
             return
 
-        rpm, hfeed, vfeed, Hp = self.calculation.calculate(tool)
+        rpm, hfeed, vfeed, Hp = self.calculation.calculate(tool, surfaceSpeed)
         watts = Hp * 745.69
 
         self.form.rpm_result.setText(str(rpm))

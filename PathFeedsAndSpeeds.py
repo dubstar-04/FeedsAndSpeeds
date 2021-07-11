@@ -229,10 +229,10 @@ class FSCalculation:
     def set_material(self, material):
         self.material = material
 
-    def calculate(self, tool):
+    def calculate(self, tool, surfaceSpeed):
 
         materials = load_materials()
-        surfaceSpeed = self.get_surface_speed()
+        # surfaceSpeed = self.get_surface_speed()
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         # C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
