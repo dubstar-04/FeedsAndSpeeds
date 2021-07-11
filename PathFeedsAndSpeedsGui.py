@@ -171,7 +171,6 @@ class FeedSpeedPanel():
         self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
-        self.form.show()
         self.form.exec_()
 
     def reject(self):
