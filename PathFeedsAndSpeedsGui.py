@@ -114,9 +114,11 @@ class FeedSpeedPanel():
 
         if tc:
             rpm = self.form.rpm_result.text()
-            feed = self.form.feed_result.text()
+            hfeed = self.form.hfeed_result.text()
+            vfeed = self.form.vfeed_result.text()
             # TODO: Add a confirmation dialog
-            tc.HorizFeed = feed
+            tc.HorizFeed = hfeed
+            tc.VertFeed = vfeed
             tc.SpindleSpeed = float(rpm)
 
     def calculate(self):
@@ -133,8 +135,6 @@ class FeedSpeedPanel():
         else:
             self.form.rpm_result.setEnabled(True)
 
-        # if self.tabWidget.currentIndex() == 0:
-            # calculate for milling
         tool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
         tool.flutes = self.form.flutes_SB.value()
         self.calculation.feedPerTooth = float(self.form.FPT_SB.value())
@@ -142,32 +142,16 @@ class FeedSpeedPanel():
         self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())
         self.calculation.toolWear = 1.1  # Tool Wear pg: 1048
         self.set_tool_material()
-        self.calculation.opType = 'Milling'
-
-        """
-        else:
-            # calculate for drilling
-            tool.toolDia = float(self.drillDia_LE.text())
-            calculation.feedPerTooth = float(self.drillFPT_SB.value())
-            calculation.toolWear = 1.3 ## Tool Wear pg: 1048
-            calculation.ss_by_material = "ss_drill_hss" if self.hss_RB.isChecked() else "ss_drill_cbd"
-            calculation.opType = 'Drilling'
-            print('tooldia', tool.toolDia)
-            if tool.toolDia:
-                notes = 'Note: Peck drilling should be used when hole depth > {0}'
-                self.drilling_notes.setText(notes.format(tool.toolDia * 4))
-            else:
-                self.drilling_notes.setText('')
-        """
 
         if not self.calculation.feedPerTooth:
             return
 
-        rpm, feed, Hp = self.calculation.calculate(tool)
+        rpm, hfeed, vfeed, Hp = self.calculation.calculate(tool)
         watts = Hp * 745.69
 
         self.form.rpm_result.setText(str(rpm))
-        self.form.feed_result.setText(str(feed) + " mm/min")
+        self.form.hfeed_result.setText(str(hfeed) + " mm/min")
+        self.form.vfeed_result.setText(str(vfeed) + " mm/min")
         self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
