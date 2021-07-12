@@ -150,10 +150,19 @@ class FeedSpeedPanel():
 
         rpm, hfeed, vfeed, Hp = self.calculation.calculate(tool, surfaceSpeed)
         watts = Hp * 745.69
+        
+        unit_schema = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Units").GetInt("UserSchema")
+        FreeCAD.Units.listSchemas() # prints a description of all schemes
+        us = FreeCAD.Units.listSchemas(unit_schema) # prints the description of given scheme number
+        # print("\n\t\t -- Users Units Preferences ", unit_schema, " ", us)
 
+        hfeed_units=FreeCAD.Units.schemaTranslate(FreeCAD.Units.Quantity(hfeed/60, FreeCAD.Units.Velocity), unit_schema)
+        vfeed_units=FreeCAD.Units.schemaTranslate(FreeCAD.Units.Quantity(vfeed/60, FreeCAD.Units.Velocity), unit_schema)
         self.form.rpm_result.setText(str(rpm))
-        self.form.hfeed_result.setText(str(hfeed) + " mm/min")
-        self.form.vfeed_result.setText(str(vfeed) + " mm/min")
+        self.form.hfeed_result.setText(str(hfeed_units[0])) # + " mm/min")
+        self.form.vfeed_result.setText(str(vfeed_units[0])) # + " mm/min")
+        # self.form.hfeed_result.setText(str(hfeed) + " mm/min")  #1432
+        # self.form.vfeed_result.setText(str(vfeed) + " mm/min")
         self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
