@@ -247,7 +247,7 @@ class FeedSpeedPanel():
         self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
         if app_mode_FCaddon == False:
             # For standalone print outputs to console
-            print(hfeed, vfeed, watts, rpm)
+            print(hfeed, vfeed, int(watts), rpm)
 
     def show(self):
         #if FeedsAndSpeedsConfig.app_mode_FCaddon:
