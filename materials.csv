@@ -6,7 +6,7 @@
 #
 "material","ss_hss","ss_cbd","ss_drill_hss","ss_drill_cbd","kp","brinell","Kd","Note"
 "Softwood",225,255,185,205,0.5,0,3000
-"Hardwoodhwhw",145,275,115,400,0.75,0,4000
+"Hardwood",145,275,115,400,0.75,0,4000
 "Soft Plastics",225,255,185,205,0.5,0,2000
 "Hard Plastics",225,275,115,400,0.75,0,2000
 "Aluminium (6061)",175,395,135,310,0.9,95,7000

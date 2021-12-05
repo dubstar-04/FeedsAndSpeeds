@@ -1,6 +1,9 @@
 # Feed and Speed Calculator
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
+#TODO test on windows eg: path '\' ???
+
+
 import math
 from bisect import bisect_right
 
@@ -217,14 +220,16 @@ def load_materials():
     # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
     # Kd = workMaterialFactor from Table 31
     # ref: 1 ft/min = 0.3048 m/min
-    #filename = "../Mod/FeedsAndSpeeds/materials.csv"
 
+    return load_data('materials.csv')
+
+def load_data(dataFile):
     import os
     p = os.path.dirname(__file__)
-    filename = p + '/' + 'materials.csv'
+    #TODO windows path '\' ???
+    filename = p + '/' + dataFile
 
-    materials=[]
-
+    dataDict=[]
     with open(filename,'r') as csvin:
         alist=list(csv.reader(csvin))
         firstLine = True
@@ -237,9 +242,9 @@ def load_materials():
                     firstLine = False
             else:
                 # print(rowConvert(h,a))
-                materials.append(rowConvert(h,a))
+                dataDict.append(rowConvert(h,a))
 
-    return materials
+    return dataDict
 # --- end csv -----------------------------
 
 class Tool:
