@@ -57,6 +57,7 @@ class FeedSpeedPanel():
         self.load_tool_properties()
         self.set_tool_material()
         self.set_material()
+        
 
     def set_tool_properties(self, dia, flutes, chipload, material):
         self.form.toolDia_LE.setText(str(dia))
@@ -76,6 +77,8 @@ class FeedSpeedPanel():
         self.calculation.set_material(material)
         ss = self.calculation.get_surface_speed()
         self.form.ss_LE.setText(str(ss))
+        cl = self.calculation.get_chipload(FreeCAD.Units.Quantity(self.form.toolDia_LE.text()))
+        self.form.FPT_SB.setValue(0.01)   #TODO hopefully just need cl value 
         self.calculate
 
     def set_tool_material(self):

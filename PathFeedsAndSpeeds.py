@@ -35,6 +35,7 @@ def getInterpolatedValue(inputDict, value):
     try:
         return interpolation(value)
     except:
+        #TODO should pass in & print here WHICH var was looking up!!!!
         print("Interpolated value outside the expected range")
         return None
 
@@ -276,9 +277,9 @@ class FSCalculation:
         self.rpm_overide = None
         self.ss_by_material = None
         
-        ...gotta think about existing fpt as some #, moving to dynamic material based chipload (or fpt) lookup
+        #TODO...gotta think about existing fpt as some #, moving to dynamic material based chipload (or fpt) lookup
         self.cl_by_material = None
-        self.feedPerTooth = None
+        #self.feedPerTooth = None
         
         self.toolWear = None
         self.WOC = None
@@ -295,13 +296,50 @@ class FSCalculation:
 
         return "-"
 
-    def get_chipload(self):
-        print("material", self.material)
+    def get_chipload(self, tool):
+        print("material ...chiploads todo!!!!") #, self.material)
         #TODO Look at only loading materials ONCE for cl & ss & ....
         if self.material:
-            materials = load_materials()
-            chipload = next(item for item in materials if item["material"] == self.material).get(self.cl_by_material)
-            print("found cl:", chipload)
+            
+            
+            
+            #>>>>TEST FROM SCRIPT - IE SKIP GUI SIDE FOR NOW!!!!!
+            #STILL PUZZLED WHY NEVER HAD INTERP ISSUE BEFORE - gui dflt for cl is 0.01!!!!!!
+            
+            
+            # oops exisiting SF materials <> materials in chiploads.csv!!!!!
+            #Also cl needs BOTH stock material & tool dia!!!!
+            #AND it is a dictionary {material {2xpair intercept, slope}...& other items}
+                #>>>>>> PLUS TOOL MATERIAL IE HSS/CARBIDE/......
+                
+            #self.material, 
+ 
+        #for rowDict in something:
+            #data_source = rowDict["data source"]
+            #csvFile = rowDict["csv file"]
+            #mat_group = rowDict["mat group"]
+            #mat_tag = rowDict["mat tag"]
+            #material = rowDict["material"]
+            #desc = rowDict["desc"]
+            #min_b0_y_intercept = rowDict["min_b0_y_intercept"]
+            #min_b1_slope = rowDict["min_b1_slope"]
+            #max_b0_y_intercept = rowDict["max_b0_y_intercept"]
+            #max_b1_slope = rowDict["max_b1_slope"]
+            #tool_material = rowDict["tool_material"]
+            #notes = rowDict["Notes"]
+		
+            #....WTF does/should load_chiploads get called???
+                #for now added at #323....BUT WHERE DOES chiploads then get used???
+            
+            #temp test does work
+            #chiploads = load_chiploads()
+            #print(chiploads)
+            
+            #materials = load_materials()
+            #chipload = next(item for item in materials if item["material"] == self.material).get(self.cl_by_material)
+            #print("found cl: ", chipload, " for material ", self.material)
+            chipload = 0.02
+            print("FAKING found cl: ", chipload, " for material ", self.material)
             return chipload
 
         return "-"
@@ -312,12 +350,24 @@ class FSCalculation:
     def calculate(self, tool, surfaceSpeed):
 
         materials = load_materials()
+        chiploads = load_chiploads()
         
+        #TODO>>>hmmm uncommenting below wrong approach??? 
+            #instead should be set from init above, or from gui - user sets material ...trigers updates of ss & cl???
         # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
         surfaceSpeed = self.get_surface_speed()
+        chipload = self.get_chipload(tool)
+        print('calculate FAKING chipload ', chipload)
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
+        
+        #TODO got getInterpolatedValue error msg for chipload 0.01!!!!!!!!
+        #TODO Have mapped power curve for Power Consstant: See "mc hb machining power p1057 table 2 feed factors for power const C.ods"
+        #       ...so can replace interp with equation C = 0.785015843093532 * ChipLoad^-0.197425892437151 (^ = raised to power of..)
+        #               above #s for metric. Curve fit look v good, but smaller ChipLoad are gunna be less accurate
+        #                   1. curve goes up v v sharp for small vaules, so small varations = larger error
+        #                   2. chip thinning & min possible chip thickness...
         # C = Power Constant
-        C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
+        C = getInterpolatedValue(load_powerConstant(), chipload)    #self.feedPerTooth)
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
         calc_rpm = rpm
 
@@ -329,17 +379,19 @@ class FSCalculation:
 
         # Machining Power
         # Horizontal Feed
-        hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
+        #hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
+        hfeed = int(calc_rpm * chipload * tool.flutes)
         # Calculation to Machineries Handbook: Pg 1058
         # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
         # Material Removal Rate: Pg 1049
         Q = float((self.WOC * self.DOC * hfeed) / 60000)  # cm^3/s
-        # print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
+        print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
         # Power Required at the cutter: Pg 1048
         Pc = Kp * C * Q * self.toolWear
 
         # Vertical Feed
-        vfeed = int(self.feedPerTooth * calc_rpm)
+        #vfeed = int(self.feedPerTooth * calc_rpm)
+        vfeed = int(chipload * calc_rpm)
         # Kd = Work material factor (Table 31)
         # Ff = Feed factor (Table 33)
         # FM = Torque factor for drill diameter (Table 34)
