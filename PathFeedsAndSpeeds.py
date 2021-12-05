@@ -223,6 +223,9 @@ def load_materials():
 
     return load_data('materials.csv')
 
+def load_chiploads():
+    return load_data('chiploads.csv')
+
 def load_data(dataFile):
     import os
     p = os.path.dirname(__file__)
@@ -272,8 +275,12 @@ class FSCalculation:
         self.material = None
         self.rpm_overide = None
         self.ss_by_material = None
-        self.toolWear = None
+        
+        ...gotta think about existing fpt as some #, moving to dynamic material based chipload (or fpt) lookup
+        self.cl_by_material = None
         self.feedPerTooth = None
+        
+        self.toolWear = None
         self.WOC = None
         self.DOC = None
         self.limits = None
@@ -288,13 +295,26 @@ class FSCalculation:
 
         return "-"
 
+    def get_chipload(self):
+        print("material", self.material)
+        #TODO Look at only loading materials ONCE for cl & ss & ....
+        if self.material:
+            materials = load_materials()
+            chipload = next(item for item in materials if item["material"] == self.material).get(self.cl_by_material)
+            print("found cl:", chipload)
+            return chipload
+
+        return "-"
+
     def set_material(self, material):
         self.material = material
 
     def calculate(self, tool, surfaceSpeed):
 
         materials = load_materials()
-        # surfaceSpeed = self.get_surface_speed()
+        
+        # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
+        surfaceSpeed = self.get_surface_speed()
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         # C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
