@@ -36,37 +36,37 @@ def getInterpolatedValue(inputDict, value):
         return None
 
 
-def load_materials():
-    # Data from Machineries Handbook 28.
-    # Kp: Tables 1a, 1b
-    # Brinell Hardness: http://www.matweb.com
+#def load_materials():
+    #Data from Machineries Handbook 28.
+    #Kp: Tables 1a, 1b
+    #Brinell Hardness: http://www.matweb.com
 
-    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
-    # ss_cbd = surface speed (m/min) for milling with carbide tools
-    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
-    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
-    # Kd = workMaterialFactor from Table 31
-    # ref: 1 ft/min = 0.3048 m/min
+    #ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
+    #ss_cbd = surface speed (m/min) for milling with carbide tools
+    #ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
+    #ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
+    #Kd = workMaterialFactor from Table 31
+    #ref: 1 ft/min = 0.3048 m/min
 
-    materials = [
-        {"material": "Softwood",                 "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 3000},  # noqa: E241
-        {"material": "Hardwood",                 "ss_hss": 145,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 4000},  # noqa: E241
-        {"material": "Soft Plastics",            "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Hard Plastics",            "ss_hss": 225,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Aluminium (6061)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 95,    "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (7075)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 125,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (Cast)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.68,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Brass (Hard)",             "ss_hss": 200,  "ss_cbd": 395,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 2.27,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Medium)",           "ss_hss": 175,  "ss_cbd": 350,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 1.36,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Soft)",             "ss_hss": 125,  "ss_cbd": 300,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 0.68,     "brinell": 120,   "Kd": 7000},  # noqa: E241
-        {"material": "Carbon Steel",             "ss_hss": 35,   "ss_cbd": 120,   "ss_drill_hss": 25,    "ss_drill_cbd": 90,     "kp": 1.88,     "brinell": 130,   "Kd": 24000},  # noqa: E241
-        {"material": "Tool Steel",               "ss_hss": 12,   "ss_cbd": 45,    "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 1.88,     "brinell": 400,   "Kd": 340000},  # noqa: E241
-        {"material": "Stainless (303)",          "ss_hss": 25,   "ss_cbd": 85,    "ss_drill_hss": 20,    "ss_drill_cbd": 65,     "kp": 2.07,     "brinell": 200,   "Kd": 200000},  # noqa: E241
-        {"material": "Stainless (304)",          "ss_hss": 10,   "ss_cbd": 37.5,  "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 2.07,     "brinell": 125,   "Kd": 22000},  # noqa: E241
-        {"material": "Stainless (316)",          "ss_hss": 7.5,  "ss_cbd": 25,    "ss_drill_hss": 5,     "ss_drill_cbd": 20,     "kp": 2.07,     "brinell": 80,    "Kd": 24000},  # noqa: E241
-    ]
+    #materials = [
+        #{"material": "Softwood",                 "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 3000},  # noqa: E241
+        #{"material": "Hardwood",                 "ss_hss": 145,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 4000},  # noqa: E241
+        #{"material": "Soft Plastics",            "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 2000},  # noqa: E241
+        #{"material": "Hard Plastics",            "ss_hss": 225,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 2000},  # noqa: E241
+        #{"material": "Aluminium (6061)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 95,    "Kd": 7000},  # noqa: E241
+        #{"material": "Aluminium (7075)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 125,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 150,   "Kd": 7000},  # noqa: E241
+        #{"material": "Aluminium (Cast)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.68,     "brinell": 150,   "Kd": 7000},  # noqa: E241
+        #{"material": "Brass (Hard)",             "ss_hss": 200,  "ss_cbd": 395,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 2.27,     "brinell": 120,   "Kd": 14000},  # noqa: E241
+        #{"material": "Brass (Medium)",           "ss_hss": 175,  "ss_cbd": 350,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 1.36,     "brinell": 120,   "Kd": 14000},  # noqa: E241
+        #{"material": "Brass (Soft)",             "ss_hss": 125,  "ss_cbd": 300,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 0.68,     "brinell": 120,   "Kd": 7000},  # noqa: E241
+        #{"material": "Carbon Steel",             "ss_hss": 35,   "ss_cbd": 120,   "ss_drill_hss": 25,    "ss_drill_cbd": 90,     "kp": 1.88,     "brinell": 130,   "Kd": 24000},  # noqa: E241
+        #{"material": "Tool Steel",               "ss_hss": 12,   "ss_cbd": 45,    "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 1.88,     "brinell": 400,   "Kd": 340000},  # noqa: E241
+        #{"material": "Stainless (303)",          "ss_hss": 25,   "ss_cbd": 85,    "ss_drill_hss": 20,    "ss_drill_cbd": 65,     "kp": 2.07,     "brinell": 200,   "Kd": 200000},  # noqa: E241
+        #{"material": "Stainless (304)",          "ss_hss": 10,   "ss_cbd": 37.5,  "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 2.07,     "brinell": 125,   "Kd": 22000},  # noqa: E241
+        #{"material": "Stainless (316)",          "ss_hss": 7.5,  "ss_cbd": 25,    "ss_drill_hss": 5,     "ss_drill_cbd": 20,     "kp": 2.07,     "brinell": 80,    "Kd": 24000},  # noqa: E241
+    #]
 
-    return materials
+    #return materials
 
 
 def load_powerConstant():
@@ -184,6 +184,63 @@ def load_diameterFactors():
     }
     return diameterFactors
 
+# --- csv -----------------------------
+# From user imm https://forum.freecadweb.org/viewtopic.php?f=15&t=59856&start=50
+import csv
+# -- any numeric value that can be converted to float is converted to float.
+def fitem(item):
+    item.strip()
+    try:
+        item=float(item)
+    except ValueError:
+        pass
+    return item
+
+# -- takes a header list and row list converts it into a dict. Numeric values converted to float in the row list wherever possible. 
+def rowConvert(h,a):
+    b=[]
+    for x in a:
+        b.append(fitem(x))
+    k = iter(h)
+    it = iter(b)
+    res_dct = dict(zip(k, it))
+    return res_dct
+
+def load_materials():
+    # Data from Machineries Handbook 28.
+    # Kp: Tables 1a, 1b
+    # Brinell Hardness: http://www.matweb.com
+
+    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
+    # ss_cbd = surface speed (m/min) for milling with carbide tools
+    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
+    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
+    # Kd = workMaterialFactor from Table 31
+    # ref: 1 ft/min = 0.3048 m/min
+    #filename = "../Mod/FeedsAndSpeeds/materials.csv"
+
+    import os
+    p = os.path.dirname(__file__)
+    filename = p + '/' + 'materials.csv'
+
+    materials=[]
+
+    with open(filename,'r') as csvin:
+        alist=list(csv.reader(csvin))
+        firstLine = True
+        for a in alist:
+            if firstLine:
+                if len(a) == 0: continue
+                if len(a) == 1: continue
+                else:
+                    h = a
+                    firstLine = False
+            else:
+                # print(rowConvert(h,a))
+                materials.append(rowConvert(h,a))
+
+    return materials
+# --- end csv -----------------------------
 
 class Tool:
     def __init__(self, toolDia=6, flutes=3):

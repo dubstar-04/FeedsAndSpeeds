@@ -1,0 +1,22 @@
+# -- null line below --
+
+# -- whitespace line below --
+   
+# -- comments here --
+#
+"material","ss_hss","ss_cbd","ss_drill_hss","ss_drill_cbd","kp","brinell","Kd","Note"
+"Softwood",225,255,185,205,0.5,0,3000
+"Hardwoodhwhw",145,275,115,400,0.75,0,4000
+"Soft Plastics",225,255,185,205,0.5,0,2000
+"Hard Plastics",225,275,115,400,0.75,0,2000
+"Aluminium (6061)",175,395,135,310,0.9,95,7000
+"Aluminium (7075)",175,395,125,310,0.9,150,7000
+"Aluminium (Cast)",175,395,135,310,0.68,150,7000
+"Brass (Hard)",200,395,115,350,2.27,120,14000
+"Brass (Medium)",175,350,115,350,1.36,120,14000
+"Brass (Soft)",125,300,115,350,0.68,120,7000
+"Carbon Steel",35,120,25,90,1.88,130,24000
+"Tool Steel",12,45,10,30,1.88,400,340000
+"Stainless (303)",25,85,20,65,2.07,200,200000
+"Stainless (304)",10,37.5,10,30,2.07,125,22000
+"Stainless (316)",7.5,25,5,20,2.07,80,24000
