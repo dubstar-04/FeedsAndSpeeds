@@ -381,6 +381,35 @@ class FSCalculation:
         # so sorta in my ballpark...
         
         
+        
+        #TODOs
+            #do some paypal/tpg/harveynorman/B jab...
+            
+            #review Generics...poss more overall data...check how much good data per material...
+            #  >>add temp col to flag good/ok/poor data??
+            
+            # one/more jobs INCLUDE BCMS cnc jobs/limits
+            #start some new CNC jobs - small ones!!!
+            #- tidy/clean up
+            #- priortise infile TODOs ....maybe ditto for TWOxtext file todos
+            #- match both sets materials ...maybe even an extra col in both sets at least temp until decice or GET CONSESUS!!!!
+
+            #>>>++ tool material data AND IN chiplaod lookup!!!!!!
+            
+            #gui via FC & standalone
+            
+            #release
+            #wanna push scripted overides - DAM USEFUL!!!!
+            #- chip thinning
+            #??is there an absolute min??? prob not as everyone just talks about rubbing.....
+            
+            #overide -> printing is GOOD
+            #need DOC&WOC & >>#Flutes tool material<<< & ????? in output to remind/compare.....
+            >>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
+            ...fine for my ver but????
+        
+        
+        
         #TODO revert to std chipload data AND matching material names (with fs material list names)
         
         #TODO WHAT ABOUT #flutes & chipload!!!!!! ...already catered for in hfeed calc????
@@ -450,6 +479,6 @@ class FSCalculation:
         #print("%s,\t\t tool.toolDia %d, calc_chipload %4f, calc_rpm %d, feed %d, vfeed  %.d & Watts %d" % (self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
         #print("{0:20} tool.toolDia {1}, calc_chipload {2}, calc_rpm {3}, feed {4}, vfeed  {5} & Watts {6}".format(self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
         #print("{:20} {:4} {:6}->{:6} {:6}->{:6} {:6} {:6} {:6}".format(self.material, tool.toolDia, calc_chipload, calc_chipload, rpm, calc_rpm, hfeed, vfeed, Hp*745.6999))
-        print(f'{self.material:18} {tool.toolDia:2.2f}mm {calc_chipload:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
+        print(f'{self.material:18} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
