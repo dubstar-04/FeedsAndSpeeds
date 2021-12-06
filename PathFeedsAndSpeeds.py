@@ -358,15 +358,17 @@ class FSCalculation:
             #instead should be set from init above, or from gui - user sets material ...trigers updates of ss & cl???
         # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
         surfaceSpeed = self.get_surface_speed()
-        chipload = self.get_chipload(tool)
+        #chipload = self.get_chipload(tool)
         #print(self.material, chipload)
         
         # REMEMBER HAVE *NOT* MATCHED MY MAT_GROUPS WITH EXISTING MATERIALS GROUPS!!!!!!!
         # ONLY *one* matching Softwood ATM
+        
+        #TODO prob will need to ALSO look at tool material HSS/carbide...but data not fully in pace & unsure upbout carbide/sintered carbide/carbide+coating....
         max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
         max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
         chipload_calculated = max_y_intercept + tool.toolDia*max_y_slope
-        print('calculate FAKING chipload ', chipload, max_y_intercept, max_y_slope, tool.toolDia, chipload_calculated)
+        print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, chipload_calculated)
         
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
@@ -377,7 +379,7 @@ class FSCalculation:
         #                   1. curve goes up v v sharp for small vaules, so small varations = larger error
         #                   2. chip thinning & min possible chip thickness...
         # C = Power Constant
-        C = getInterpolatedValue(load_powerConstant(), chipload)    #self.feedPerTooth)
+        C = getInterpolatedValue(load_powerConstant(), chipload_calculated)    #self.feedPerTooth)
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
         calc_rpm = rpm
 
@@ -390,7 +392,7 @@ class FSCalculation:
         # Machining Power
         # Horizontal Feed
         #hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
-        hfeed = int(calc_rpm * chipload * tool.flutes)
+        hfeed = int(calc_rpm * chipload_calculated * tool.flutes)
         # Calculation to Machineries Handbook: Pg 1058
         # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
         # Material Removal Rate: Pg 1049
@@ -401,7 +403,7 @@ class FSCalculation:
 
         # Vertical Feed
         #vfeed = int(self.feedPerTooth * calc_rpm)
-        vfeed = int(chipload * calc_rpm)
+        vfeed = int(chipload_calculated * calc_rpm)
         # Kd = Work material factor (Table 31)
         # Ff = Feed factor (Table 33)
         # FM = Torque factor for drill diameter (Table 34)
