@@ -298,32 +298,22 @@ class FSCalculation:
         return "-"
 
     def get_chipload(self, tool):
-        #print("material ...chiploads todo!!!!") #, self.material)
         #TODO Look at only loading materials ONCE for cl & ss & ....
-        if self.material:
-            #STILL PUZZLED WHY NEVER HAD INTERP ISSUE BEFORE - gui dflt for cl is 0.01!!!!!!
-            
+        #TODO need add tool material HSS/carbide...but data not fully in pace & unsure upbout carbide/sintered carbide/carbide+coating....
             # oops exisiting SF materials <> materials in chiploads.csv!!!!!
-            #Also cl needs BOTH stock material & tool dia!!!!
             #AND it is a dictionary {material {2xpair intercept, slope}...& other items}
-                #>>>>>> PLUS TOOL MATERIAL IE HSS/CARBIDE/
                 # ......hmm time to expand both shorthad lookup sbelow
                 # ATM lookup by stock material, need add 2nd lookup for tool material
                 # OR JUST SPLIT csv INTO TWO TABLES HSS/CARBIDE!!!
+                #   >>BUT also need decide on keep & THUS *CODE* to use min/max cl linear line values.......
                 # EITHER WAY - need another if self.material: ...but for tool material
-                
-            #....WTF does/should load_chiploads get called???
-                #for now added at #323....BUT WHERE DOES chiploads then get used???
-           
-            #print("found cl: ", chipload, " for material ", self.material)
+        if self.material:
             chiploads = load_chiploads()
-            #print (chiploads)
             max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
             max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
             chipload = max_y_intercept + tool.toolDia*max_y_slope
+            #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, chipload)
 
-            #chipload = 0.02
-            #print("FAKING found cl: ", chipload, " for material ", self.material)
             return chipload
 
         return "-"
@@ -335,75 +325,44 @@ class FSCalculation:
 
         materials = load_materials()
         #print(materials)
-        #chiploads = load_chiploads()
-        #print (chiploads)
-
         #TODO>>>hmmm uncommenting below wrong approach??? 
-            #instead should be set from init above, or from gui - user sets material ...trigers updates of ss & cl???
+            #instead should be set from init above, or from gui/cmdline script - user sets material ...trigers updates of ss & cl???
         # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
         #surfaceSpeed = self.get_surface_speed()
-        #chipload = self.get_chipload(tool)
-        #print(self.material, chipload)
-        
-        # REMEMBER HAVE *NOT* MATCHED MY MAT_GROUPS WITH EXISTING MATERIALS GROUPS!!!!!!!
-        # ONLY *one* matching Softwood ATM
-        
-        #TODO prob will need to ALSO look at tool material HSS/carbide...but data not fully in pace & unsure upbout carbide/sintered carbide/carbide+coating....
-        #max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
-        #max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
-        #calc_chipload = max_y_intercept + tool.toolDia*max_y_slope
+
         calc_chipload = self.get_chipload(tool)
         
-        #ATM outputs ...ie rmp etc v v high ...looks like chipload v high .... X10????
-        #hmm chiploads here = same as test calcs in spreadsheet ...so loading/looking up values OK
-        #??getting confused from FS Calc default CL = self.toolDia * 0.01????????
-        #1. oops was using Tool carbide, NOT HSS!!!!!!
-        #2. was using MAX chipload intercept/slope
-        #so NOW for 4mm, 1flute tool rpm overide 10k, 
-        #   400mm/min feedrate WITH 60% chipload overide
-        #   680 without chipload overide!!!
-        # so sorta in my ballpark...
-        
-        
-        
         #TODOs
-            #do some paypal/tpg/harveynorman/B jab...
-            
-            #review Generics...poss more overall data...check how much good data per material...
+            #review Generic Materials...poss more overall data...check how much good data per material...
             #  >>add temp col to flag good/ok/poor data??
+            # and the merge with existing SF materials
             
-            # one/more jobs INCLUDE BCMS cnc jobs/limits
-            #start some new CNC jobs - small ones!!!
-            #- tidy/clean up
+            # SEV more TEST jobs & INCLUDE BCMS cnc jobs/limits
+            # start some new CNC jobs - small ones!!!
+            # tidy/clean up
             #- priortise infile TODOs ....maybe ditto for TWOxtext file todos
             #- match both sets materials ...maybe even an extra col in both sets at least temp until decice or GET CONSESUS!!!!
 
-            #>>>++ tool material data AND IN chiplaod lookup!!!!!!
+            #>>>++ {tool material} data AND {min max data pairs} IN chipload lookup!!!!!!
             
             #gui via FC & standalone
             
-            #release
-            #wanna push scripted overides - DAM USEFUL!!!!
+            #release>>>DO 1Xcsv+materials release{& note immenent relase of chipload csv...}, then 1xchiploads, then powerconstant, .....
+
+            #wanna push **scripted** overides ...then optional-auto via gui - DAM USEFUL!!!!
             #- chip thinning
             #??is there an absolute min??? prob not as everyone just talks about rubbing.....
             
             #overide -> printing is GOOD
-            #need DOC&WOC & >>#Flutes tool material<<< & ????? in output to remind/compare.....
-            #>>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
-            #...fine for my ver but????
+            #   need DOC&WOC & >>#Flutes tool material<<< & ????? in output to remind/compare.....
+            #   >>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
+            #   ...fine for my ver but????
         
-        
-        
-        #TODO revert to std chipload data AND matching material names (with fs material list names)
-        
-        #TODO WHAT ABOUT #flutes & chipload!!!!!! ...already catered for in hfeed calc????
         #TODO add chip thinning calc ,,,potentiall make it an optional calc/change??
-        #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, calc_chipload)
         
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
-        #TODO got getInterpolatedValue error msg for chipload 0.01!!!!!!!!
-        #TODO Have mapped power curve for Power Consstant: See "mc hb machining power p1057 table 2 feed factors for power const C.ods"
+        #TODO Have mapped power curve for Power Constant: See "mc hb machining power p1057 table 2 feed factors for power const C.ods"
         #       ...so can replace interp with equation C = 0.785015843093532 * ChipLoad^-0.197425892437151 (^ = raised to power of..)
         #               above #s for metric. Curve fit look v good, but smaller ChipLoad are gunna be less accurate
         #                   1. curve goes up v v sharp for small vaules, so small varations = larger error
@@ -460,9 +419,6 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
-        #print("%s,\t\t tool.toolDia %d, calc_chipload %4f, calc_rpm %d, feed %d, vfeed  %.d & Watts %d" % (self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
-        #print("{0:20} tool.toolDia {1}, calc_chipload {2}, calc_rpm {3}, feed {4}, vfeed  {5} & Watts {6}".format(self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
-        #print("{:20} {:4} {:6}->{:6} {:6}->{:6} {:6} {:6} {:6}".format(self.material, tool.toolDia, calc_chipload, calc_chipload, rpm, calc_rpm, hfeed, vfeed, Hp*745.6999))
         print(f'{self.material:18} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
