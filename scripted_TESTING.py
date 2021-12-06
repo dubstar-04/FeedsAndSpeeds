@@ -47,7 +47,7 @@ fsAddon.ss_by_material = "ss_hss"           # "ss_hss" "ss_cbd"
 
 
 fsAddon.rpm_overide = 10000
-fsAddon.chipload_overide = 60   #trying percentage reduction!!!!
+#fsAddon.chipload_overide = 60   #trying percentage reduction!!!!
 #TODO overrides CAN lead to increasesd...ie not just reductions!!!
 # add a flag to dis/allow ...ONE FLAG for each overide ie rpm, chipload....
 # from spreadsheet ...somebody suggested:

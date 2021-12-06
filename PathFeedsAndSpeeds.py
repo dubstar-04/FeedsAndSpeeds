@@ -373,7 +373,15 @@ class FSCalculation:
         #ATM outputs ...ie rmp etc v v high ...looks like chipload v high .... X10????
         #hmm chiploads here = same as test calcs in spreadsheet ...so loading/looking up values OK
         #??getting confused from FS Calc default CL = self.toolDia * 0.01????????
+        #1. oops was using Tool carbide, NOT HSS!!!!!!
+        #2. was using MAX chipload intercept/slope
+        #so NOW for 4mm, 1flute tool rpm overide 10k, 
+        #   400mm/min feedrate WITH 60% chipload overide
+        #   680 without chipload overide!!!
+        # so sorta in my ballpark...
         
+        
+        #TODO revert to std chipload data AND matching material names (with fs material list names)
         
         #TODO WHAT ABOUT #flutes & chipload!!!!!! ...already catered for in hfeed calc????
         #TODO add chip thinning calc ,,,potentiall make it an optional calc/change??
