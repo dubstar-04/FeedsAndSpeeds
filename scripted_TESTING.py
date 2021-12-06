@@ -31,6 +31,8 @@ fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
 fsAddon.ss_by_material = "ss_cbd"           # "ss_hss" "ss_cbd"
 
 # Original calculator behaviour, no SCRIPTED over rides
-rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
-print("\t rpm %d, feed %d, vfeed  %.d & Watts %d" % (rpm, feed, vfeed, Hp*745.6999))
-print(" -- end Feeds and Speeds **TEST** integration script/macro --")
+for dia in range(2,10,2):
+    tool.toolDia = dia
+    rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
+    #print("\t tool.toolDia %d rpm %d, feed %d, vfeed  %.d & Watts %d" % (tool.toolDia, rpm, feed, vfeed, Hp*745.6999))
+#print(" -- end Feeds and Speeds **TEST** integration script/macro --")
