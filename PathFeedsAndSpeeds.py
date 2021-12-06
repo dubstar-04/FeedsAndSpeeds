@@ -396,6 +396,7 @@ class FSCalculation:
             #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
             calc_rpm = float(self.rpm_overide)
         if self.chipload_overide:
+            orig_chipload = calc_chipload
             #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
             calc_chipload = calc_chipload * float(self.chipload_overide) / 100
 
@@ -439,6 +440,8 @@ class FSCalculation:
         # Convert to Hp
         Hp = Pm * 1.341
         #print("%s,\t\t tool.toolDia %d, calc_chipload %4f, calc_rpm %d, feed %d, vfeed  %.d & Watts %d" % (self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
-        print("{0:20} tool.toolDia {1}, calc_chipload {2}, calc_rpm {3}, feed {4}, vfeed  {5} & Watts {6}".format(self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
+        #print("{0:20} tool.toolDia {1}, calc_chipload {2}, calc_rpm {3}, feed {4}, vfeed  {5} & Watts {6}".format(self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
+        #print("{:20} {:4} {:6}->{:6} {:6}->{:6} {:6} {:6} {:6}".format(self.material, tool.toolDia, calc_chipload, calc_chipload, rpm, calc_rpm, hfeed, vfeed, Hp*745.6999))
+        print(f'{self.material:18} {tool.toolDia:2.2f}mm {calc_chipload:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
