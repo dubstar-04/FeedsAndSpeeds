@@ -21,7 +21,8 @@ tool.flutes = 1
 
 # REMEMBER HAVE *NOT* MATCHED MY MAT_GROUPS WITH EXISTING MATERIALS GROUPS!!!!!!!
 # ONLY *one* matching Softwood ATM
-fsAddon.material = "Softwood"
+#fsAddon.material = "Softwood"
+fsAddon.material = "Aluminium (6061)"
 #"Hard Plastics"  #"Hardwood"   # "Aluminium (6061)"
 
 fsAddon.feedPerTooth = float(0.060)
@@ -30,9 +31,28 @@ fsAddon.DOC = 6
 fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
 fsAddon.ss_by_material = "ss_cbd"           # "ss_hss" "ss_cbd"
 
+
+# >>>>>>these are GOOD way to do overides!!!!!!!!
+fsAddon.rpm_overide = 9000
+fsAddon.chipload_overide = 60   #trying percentage reduction!!!!
+# from spreadsheet ...somebody suggested:
+# Suggestion is to start/TEST at HALF calculated ideal feed rate	<<<< which is same as reducing chpload/fpt by half (update 2021-12)
+#   Feed rate based on chip thickness (chip load).ods
+
+# even with BOTH overides above - still getting "FAST" hfeeds
+# review my recent test settings ...reduce rpm/feed further?????????????????
+
+
+
 # Original calculator behaviour, no SCRIPTED over rides
-for dia in range(2,10,2):
+fsAddon.material = "Softwood"
+for dia in range(1,11,1):
     tool.toolDia = dia
     rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
     #print("\t tool.toolDia %d rpm %d, feed %d, vfeed  %.d & Watts %d" % (tool.toolDia, rpm, feed, vfeed, Hp*745.6999))
+print('---------------------------')
+fsAddon.material = "Aluminium (6061)"
+for dia in range(1,11,1):
+    tool.toolDia = dia
+    rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
 #print(" -- end Feeds and Speeds **TEST** integration script/macro --")

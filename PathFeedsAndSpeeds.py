@@ -275,6 +275,7 @@ class FSCalculation:
 
         self.material = None
         self.rpm_overide = None
+        self.chipload_overide = None
         self.ss_by_material = None
         
         #TODO...gotta think about existing fpt as some #, moving to dynamic material based chipload (or fpt) lookup
@@ -368,6 +369,14 @@ class FSCalculation:
         max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
         max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
         calc_chipload = max_y_intercept + tool.toolDia*max_y_slope
+        
+        #ATM outputs ...ie rmp etc v v high ...looks like chipload v high .... X10????
+        #hmm chiploads here = same as test calcs in spreadsheet ...so loading/looking up values OK
+        #??getting confused from FS Calc default CL = self.toolDia * 0.01????????
+        
+        
+        #TODO WHAT ABOUT #flutes & chipload!!!!!! ...already catered for in hfeed calc????
+        #TODO add chip thinning calc ,,,potentiall make it an optional calc/change??
         #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, calc_chipload)
         
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
@@ -384,7 +393,11 @@ class FSCalculation:
         calc_rpm = rpm
 
         if self.rpm_overide:
+            #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
             calc_rpm = float(self.rpm_overide)
+        if self.chipload_overide:
+            #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
+            calc_chipload = calc_chipload * float(self.chipload_overide) / 100
 
         # Machine Efficiency: Pg 1049
         E = 0.80
@@ -425,6 +438,7 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
-        print("\t tool.toolDia %d, calc_chipload %4f, calc_rpm %d, feed %d, vfeed  %.d & Watts %d" % (tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
+        #print("%s,\t\t tool.toolDia %d, calc_chipload %4f, calc_rpm %d, feed %d, vfeed  %.d & Watts %d" % (self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
+        print("{0:20} tool.toolDia {1}, calc_chipload {2}, calc_rpm {3}, feed {4}, vfeed  {5} & Watts {6}".format(self.material, tool.toolDia, calc_chipload, calc_rpm, hfeed, vfeed, Hp*745.6999))
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp

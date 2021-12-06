@@ -10,6 +10,6 @@
 "initial reference values","generic.csv","Soft very modelling mat etc","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.03556,0.04264,0,0.0712,"generic",-0.101599999999999
 "initial reference values","generic.csv","Softwood","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic","'-0.0254 -0.0508"
 "initial reference values","generic.csv","Wood hard","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic",
-"initial reference values","generic.csv","Aluminium","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.052519791666667,0.003916666666667,0.0635,0.0152,"generic",
+"initial reference values","generic.csv","Aluminium (6061)","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.052519791666667,0.003916666666667,0.0635,0.0152,"generic",
 "reference lines","generic.csv","reference","D/100 ~=Al","D/100 ~=Al","D/100 ~=Al",,,0,0.01,"generic",
 "reference lines","generic.csv","reference","D/20 v v soft","D/20 v v soft","D/20 v v soft",,,0,0.05,"generic", 
