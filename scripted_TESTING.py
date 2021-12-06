@@ -1,4 +1,4 @@
-# Demonstration script to run an extended version of the Feed and Speed Calculator FreeCAD addon, 
+ss_by_material# Demonstration script to run an extended version of the Feed and Speed Calculator FreeCAD addon, 
 # which can be installed from the "rpm_override" branch at https://github.com/spanner888/FeedsAndSpeeds/tree/rpm_override
 #   Original code is https://github.com/dubstar-04/FeedsAndSpeeds
 

@@ -277,9 +277,9 @@ class FSCalculation:
         self.rpm_overide = None
         self.chipload_overide = None
         self.ss_by_material = None
-        
-        #TODO...gotta think about existing fpt as some #, moving to dynamic material based chipload (or fpt) lookup
-        self.cl_by_material = None
+        # Chipload (fpt) is table lookup based on Stock material, Tool Material and Tool dia
+        # Then calculates CL = y_inercept + tdia*x_slope
+        self.cl_by_mat_tdia_tmat = None
         #self.feedPerTooth = None
         
         self.toolWear = None
@@ -301,46 +301,29 @@ class FSCalculation:
         #print("material ...chiploads todo!!!!") #, self.material)
         #TODO Look at only loading materials ONCE for cl & ss & ....
         if self.material:
-            
-            
-            
-            #>>>>TEST FROM SCRIPT - IE SKIP GUI SIDE FOR NOW!!!!!
             #STILL PUZZLED WHY NEVER HAD INTERP ISSUE BEFORE - gui dflt for cl is 0.01!!!!!!
-            
             
             # oops exisiting SF materials <> materials in chiploads.csv!!!!!
             #Also cl needs BOTH stock material & tool dia!!!!
             #AND it is a dictionary {material {2xpair intercept, slope}...& other items}
-                #>>>>>> PLUS TOOL MATERIAL IE HSS/CARBIDE/......
+                #>>>>>> PLUS TOOL MATERIAL IE HSS/CARBIDE/
+                # ......hmm time to expand both shorthad lookup sbelow
+                # ATM lookup by stock material, need add 2nd lookup for tool material
+                # OR JUST SPLIT csv INTO TWO TABLES HSS/CARBIDE!!!
+                # EITHER WAY - need another if self.material: ...but for tool material
                 
-            #self.material, 
- 
-        #for rowDict in something:
-            #data_source = rowDict["data source"]
-            #csvFile = rowDict["csv file"]
-            #mat_group = rowDict["mat group"]
-            #mat_tag = rowDict["mat tag"]
-            #material = rowDict["material"]
-            #desc = rowDict["desc"]
-            #min_b0_y_intercept = rowDict["min_b0_y_intercept"]
-            #min_b1_slope = rowDict["min_b1_slope"]
-            #max_b0_y_intercept = rowDict["max_b0_y_intercept"]
-            #max_b1_slope = rowDict["max_b1_slope"]
-            #tool_material = rowDict["tool_material"]
-            #notes = rowDict["Notes"]
-		
             #....WTF does/should load_chiploads get called???
                 #for now added at #323....BUT WHERE DOES chiploads then get used???
-            
-            #temp test does work
-            #chiploads = load_chiploads()
-            #print(chiploads)
-            
-            #materials = load_materials()
-            #chipload = next(item for item in materials if item["material"] == self.material).get(self.cl_by_material)
+           
             #print("found cl: ", chipload, " for material ", self.material)
-            chipload = 0.02
-            print("FAKING found cl: ", chipload, " for material ", self.material)
+            chiploads = load_chiploads()
+            #print (chiploads)
+            max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
+            max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
+            chipload = max_y_intercept + tool.toolDia*max_y_slope
+
+            #chipload = 0.02
+            #print("FAKING found cl: ", chipload, " for material ", self.material)
             return chipload
 
         return "-"
@@ -352,7 +335,7 @@ class FSCalculation:
 
         materials = load_materials()
         #print(materials)
-        chiploads = load_chiploads()
+        #chiploads = load_chiploads()
         #print (chiploads)
 
         #TODO>>>hmmm uncommenting below wrong approach??? 
@@ -366,9 +349,10 @@ class FSCalculation:
         # ONLY *one* matching Softwood ATM
         
         #TODO prob will need to ALSO look at tool material HSS/carbide...but data not fully in pace & unsure upbout carbide/sintered carbide/carbide+coating....
-        max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
-        max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
-        calc_chipload = max_y_intercept + tool.toolDia*max_y_slope
+        #max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
+        #max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
+        #calc_chipload = max_y_intercept + tool.toolDia*max_y_slope
+        calc_chipload = self.get_chipload(tool)
         
         #ATM outputs ...ie rmp etc v v high ...looks like chipload v high .... X10????
         #hmm chiploads here = same as test calcs in spreadsheet ...so loading/looking up values OK
@@ -405,8 +389,8 @@ class FSCalculation:
             
             #overide -> printing is GOOD
             #need DOC&WOC & >>#Flutes tool material<<< & ????? in output to remind/compare.....
-            >>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
-            ...fine for my ver but????
+            #>>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
+            #...fine for my ver but????
         
         
         
