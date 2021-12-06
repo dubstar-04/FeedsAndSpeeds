@@ -1,21 +1,15 @@
-# -- null line below --
-
-# -- whitespace line below --
-   
-# -- comments here --
-# First cut of generic Chipload data, inlcuding some reference values, 1 = Al, 2 = v soft material
 "data source","csv file","mat group","mat tag","material","desc","min_b0_y_intercept","min_b1_slope","max_b0_y_intercept","max_b1_slope","tool_material","Notes"
-"extracted min/max values per material group from details below","generic.csv","Steel P","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.01220390625,0.016,0.00127,0.00448,"generic",
-"extracted min/max values per material group from details below","generic.csv","Cast Iron K","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.022902994791667,0.002197916666667,0.017247311827957,0.00368356374808,"generic",
-"extracted min/max values per material group from details below","generic.csv","Stainless Steels M","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.021183203125,0.00228125,0.017247311827957,0.00368356374808,"generic",
-"extracted min/max values per material group from details below","generic.csv","special alloys S (also Superalloys)","Non-ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.003634408602151,0.002393241167435,0.010763440860215,0.003010752688172,"generic",
-"extracted min/max values per material group from details below","generic.csv","Hardened Steels H","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.024292057291667,0.001822916666667,0.010763440860215,0.003010752688172,"generic",
-"extracted min/max values per material group from details below","generic.csv","Brass; Bronze;Mg","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.024953515625,0.00240625,-0.008456989247312,0.010229646697389,"generic",
-"extracted min/max values per material group from details below","generic.csv","Plastic Soft","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0208,0.0762,0.0256,"generic",8.32667268468867E-17
-"extracted min/max values per material group from details below","generic.csv","Plastic Hard","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",-0.008456989247312,0.010229646697389,0.0635,0.0256,"generic",
-"extracted min/max values per material group from details below","generic.csv","Soft very modelling mat etc","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.03556,0.04264,0,0.0712,"generic",-0.101599999999999
-"extracted min/max values per material group from details below","generic.csv","Softwood","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic","'-0.0254 -0.0508"
-"extracted min/max values per material group from details below","generic.csv","Wood hard","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic",
-"extracted min/max values per material group from details below","generic.csv","Aluminium","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.052519791666667,0.003916666666667,0.0635,0.0152,"generic",
+"initial reference values","generic.csv","Steel P","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.01220390625,0.016,0.00127,0.00448,"generic",
+"initial reference values","generic.csv","Cast Iron K","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.022902994791667,0.002197916666667,0.017247311827957,0.00368356374808,"generic",
+"initial reference values","generic.csv","Stainless Steels M","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.021183203125,0.00228125,0.017247311827957,0.00368356374808,"generic",
+"initial reference values","generic.csv","special alloys S (also Superalloys)","Non-ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.003634408602151,0.002393241167435,0.010763440860215,0.003010752688172,"generic",
+"initial reference values","generic.csv","Hardened Steels H","Ferrous, metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.024292057291667,0.001822916666667,0.010763440860215,0.003010752688172,"generic",
+"initial reference values","generic.csv","Brass; Bronze;Mg","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.024953515625,0.00240625,-0.008456989247312,0.010229646697389,"generic",
+"initial reference values","generic.csv","Plastic Soft","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0208,0.0762,0.0256,"generic",8.32667268468867E-17
+"initial reference values","generic.csv","Plastic Hard","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",-0.008456989247312,0.010229646697389,0.0635,0.0256,"generic",
+"initial reference values","generic.csv","Soft very modelling mat etc","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0.03556,0.04264,0,0.0712,"generic",-0.101599999999999
+"initial reference values","generic.csv","Softwood","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic","'-0.0254 -0.0508"
+"initial reference values","generic.csv","Wood hard","non-metallic","GENERIC","TODO calc min/max ranges from materials in the group!",0,0.0456,0,0.056,"generic",
+"initial reference values","generic.csv","Aluminium","Non-ferrous N","GENERIC","TODO calc min/max ranges from materials in the group!",0.052519791666667,0.003916666666667,0.0635,0.0152,"generic",
 "reference lines","generic.csv","reference","D/100 ~=Al","D/100 ~=Al","D/100 ~=Al",,,0,0.01,"generic",
 "reference lines","generic.csv","reference","D/20 v v soft","D/20 v v soft","D/20 v v soft",,,0,0.05,"generic", 

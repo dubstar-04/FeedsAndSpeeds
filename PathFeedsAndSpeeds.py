@@ -350,14 +350,24 @@ class FSCalculation:
     def calculate(self, tool, surfaceSpeed):
 
         materials = load_materials()
+        #print(materials)
         chiploads = load_chiploads()
-        
+        #print (chiploads)
+
         #TODO>>>hmmm uncommenting below wrong approach??? 
             #instead should be set from init above, or from gui - user sets material ...trigers updates of ss & cl???
         # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
         surfaceSpeed = self.get_surface_speed()
         chipload = self.get_chipload(tool)
-        print('calculate FAKING chipload ', chipload)
+        #print(self.material, chipload)
+        
+        # REMEMBER HAVE *NOT* MATCHED MY MAT_GROUPS WITH EXISTING MATERIALS GROUPS!!!!!!!
+        # ONLY *one* matching Softwood ATM
+        max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
+        max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
+        chipload_calculated = max_y_intercept + tool.toolDia*max_y_slope
+        print('calculate FAKING chipload ', chipload, max_y_intercept, max_y_slope, tool.toolDia, chipload_calculated)
+        
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
         #TODO got getInterpolatedValue error msg for chipload 0.01!!!!!!!!
