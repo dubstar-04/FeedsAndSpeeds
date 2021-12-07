@@ -344,6 +344,10 @@ class FSCalculation:
             calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
             #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
             calc_chipload = calc_chipload_chip_thin_adjusted
+        #TODO should above chipload chip thinning "overide" be moved & merged to the direct CL override below
+        # ....or below moved/merged here???
+        
+        
         
         #TODOs
             #review Generic Materials...poss more overall data...check how much good data per material...
@@ -387,7 +391,9 @@ class FSCalculation:
 
         if self.rpm_overide:
             #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
-            #Avoid faster rpm than calculated. TODO does this need to be an option, or message to user???
+            #Avoid faster rpm than calculated. 
+            #TODO does this need to be an option, or message to user???
+            #TODO also what about ss & cl overides - similar issue(s)?
             if calc_rpm > float(self.rpm_overide):
                 calc_rpm = float(self.rpm_overide)
         if self.chipload_overide:
