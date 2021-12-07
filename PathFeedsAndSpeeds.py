@@ -293,6 +293,7 @@ class FSCalculation:
         if self.material:
             
             #TODO test behaviour in GUI here & just below for chipload!!!!
+            # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
             try:
                 materials = load_materials()
                 surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
@@ -310,6 +311,8 @@ class FSCalculation:
                 chiploads = load_chiploads()
                 #print(chiploads)
                 #print(next(item for item in chiploads))
+                #TODO test behaviour in GUI here & just below for chipload!!!!
+                # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
                 try:
                     max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
                     max_y_slope = next(item for item in chiploads if (item["mat group"] == self.material) and (item["tool_material"] == tool.material)).get("max_b1_slope")

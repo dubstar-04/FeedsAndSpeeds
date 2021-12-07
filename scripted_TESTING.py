@@ -45,7 +45,7 @@ fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
 fsAddon.ss_by_material = "ss_hss"           # "ss_hss" "ss_cbd"
 fsAddon.rpm_overide = 10000
 fsAddon.chipload_overide = 60   #trying percentage reduction!!!!
-fsAddon.material = "Aluminium (6061)"
+fsAddon.material = "Hardwood"   #Softwood"   #"Aluminium (6061)"
 
 # Original calculator behaviour WITH overides !!!!!!!
 # >>>>>>these are GOOD way to do overides!!!!!!!!
