@@ -225,9 +225,6 @@ def load_materials():
 
     return load_data('materials_ss_cl.csv')
 
-def load_chiploads():
-    return load_data('materials_ss_cl.csv')
-
 def load_data(dataFile):
     import os
     p = os.path.dirname(__file__)
@@ -297,7 +294,7 @@ class FSCalculation:
             try:
                 materials = load_materials()
                 surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-                print("material", self.material, "found ss:", surfaceSpeed)
+                #print("material", self.material, "found ss:", surfaceSpeed)
                 return surfaceSpeed
             except:
                 print("Failed to find surfaceSpeed data for Stock material: %s" % (self.material))
@@ -308,16 +305,16 @@ class FSCalculation:
         #TODO Look at only loading materials ONCE for cl & ss & ....
         if self.material:
             if tool.material:
-                chiploads = load_chiploads()
-                #print(chiploads)
-                #print(next(item for item in chiploads))
+                materials = load_materials()
+                #print(materials)
+                #print(next(item for item in materials))
                 #TODO test behaviour in GUI here & just below for chipload!!!!
                 # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
                 try:
                     #mat group
-                    max_y_intercept = next(item for item in chiploads if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
-                    max_y_slope = next(item for item in chiploads if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
-                    print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
+                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
+                    #print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
                     chipload = max_y_intercept + tool.toolDia*max_y_slope
                     #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
                     return chipload
