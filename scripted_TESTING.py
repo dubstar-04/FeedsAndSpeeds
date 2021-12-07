@@ -51,7 +51,7 @@ print('fsAddon.chipload_overide = 25 ')
 fsAddon.material = "Aluminium (6061)"   #"Hardwood"   #Softwood"   #"Aluminium (6061)"
 
 # test#1 chip thinning calc
-tool.toolDia = 20.0
+tool.toolDia = 10.0
 calc_chipload = 0.01
 print('material           toolDia calc_cl=>overide          rpm=>overide    hfeed vfeed       Hp')
 for woc in range(int(tool.toolDia), 0, -1):
