@@ -223,10 +223,10 @@ def load_materials():
     # Kd = workMaterialFactor from Table 31
     # ref: 1 ft/min = 0.3048 m/min
 
-    return load_data('materials.csv')
+    return load_data('materials_ss_cl.csv')
 
 def load_chiploads():
-    return load_data('chiploads.csv')
+    return load_data('materials_ss_cl.csv')
 
 def load_data(dataFile):
     import os
@@ -297,7 +297,7 @@ class FSCalculation:
             try:
                 materials = load_materials()
                 surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-                #print("material", self.material, "found ss:", surfaceSpeed)
+                print("material", self.material, "found ss:", surfaceSpeed)
                 return surfaceSpeed
             except:
                 print("Failed to find surfaceSpeed data for Stock material: %s" % (self.material))
@@ -314,10 +314,12 @@ class FSCalculation:
                 #TODO test behaviour in GUI here & just below for chipload!!!!
                 # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
                 try:
-                    max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
-                    max_y_slope = next(item for item in chiploads if (item["mat group"] == self.material) and (item["tool_material"] == tool.material)).get("max_b1_slope")
+                    #mat group
+                    max_y_intercept = next(item for item in chiploads if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in chiploads if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
+                    print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
                     chipload = max_y_intercept + tool.toolDia*max_y_slope
-                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, chipload)
+                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
                     return chipload
                 except:
                     print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
@@ -333,9 +335,11 @@ class FSCalculation:
         materials = load_materials()
         #print(materials)
         #TODO>>>hmmm uncommenting below wrong approach??? 
-            #instead should be set from init above, or from gui/cmdline script - user sets material ...trigers updates of ss & cl???
-        # ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
-        #surfaceSpeed = self.get_surface_speed()
+        #   instead should be set from init above, or from gui/cmdline script - user sets material ...trigers updates of ss & cl???
+        # ACTUALLY SS IS BEING PASSED!!!!!!!!
+        #   ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
+        # TEMP TESTING!
+        surfaceSpeed = self.get_surface_speed()
 
         calc_chipload = self.get_chipload(tool)
         
