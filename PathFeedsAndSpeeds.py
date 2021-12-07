@@ -339,6 +339,11 @@ class FSCalculation:
         surfaceSpeed = self.get_surface_speed()
 
         calc_chipload = self.get_chipload(tool)
+        #https://shapeokoenthusiasts.gitbook.io/shapeoko-cnc-a-to-z/feeds-and-speeds-basics
+        if self.WOC < 0.5 *  tool.toolDia:
+            calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
+            #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
+            calc_chipload = calc_chipload_chip_thin_adjusted
         
         #TODOs
             #review Generic Materials...poss more overall data...check how much good data per material...
@@ -382,7 +387,9 @@ class FSCalculation:
 
         if self.rpm_overide:
             #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
-            calc_rpm = float(self.rpm_overide)
+            #Avoid faster rpm than calculated. TODO does this need to be an option, or message to user???
+            if calc_rpm > float(self.rpm_overide):
+                calc_rpm = float(self.rpm_overide)
         if self.chipload_overide:
             orig_chipload = calc_chipload
             #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
