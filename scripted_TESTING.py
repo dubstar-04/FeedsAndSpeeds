@@ -8,6 +8,7 @@
 # version 1.0
 
 import PathFeedsAndSpeeds
+import math
 
 fsAddon = PathFeedsAndSpeeds.FSCalculation()
 
@@ -39,13 +40,29 @@ tool.toolDia = 3.0
 tool.flutes = 2
 tool.material = 'HSS'   #'HSS';'carbide';'unknown'
 
-fsAddon.WOC = tool.toolDia
+fsAddon.WOC = tool.toolDia  # *.25
+#print('fsAddon.WOC', fsAddon.WOC, ' = ', 100*fsAddon.WOC/tool.toolDia, '% for chip thinning adjustment')
 fsAddon.DOC = 1.0
 fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
 fsAddon.ss_by_material = "ss_hss"           # "ss_hss" "ss_cbd"
 fsAddon.rpm_overide = 10000
-fsAddon.chipload_overide = 60   #trying percentage reduction!!!!
+fsAddon.chipload_overide = 25   #trying percentage reduction!!!!
+print('fsAddon.chipload_overide = 25 ')
 fsAddon.material = "Aluminium (6061)"   #"Hardwood"   #Softwood"   #"Aluminium (6061)"
+
+# test#1 chip thinning calc
+tool.toolDia = 20.0
+calc_chipload = 0.01
+print('material           toolDia calc_cl=>overide          rpm=>overide    hfeed vfeed       Hp')
+for woc in range(int(tool.toolDia), 0, -1):
+    fsAddon.WOC = woc
+    rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
+    #if woc < 0.5 *  tool.toolDia:
+        #calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * fsAddon.WOC) - (fsAddon.WOC*fsAddon.WOC)))
+        #print("%2.4f %2.4f --> %2.4f " % (woc, calc_chipload , calc_chipload_chip_thin_adjusted))
+        #calc_chipload = calc_chipload_chip_thin_adjusted
+        #rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
+
 
 # Original calculator behaviour WITH overides !!!!!!!
 # >>>>>>these are GOOD way to do overides!!!!!!!!
@@ -63,11 +80,11 @@ fsAddon.material = "Aluminium (6061)"   #"Hardwood"   #Softwood"   #"Aluminium (
 # ONLY have matching "Softwood" &  "Aluminium (6061)" ATM
 # Optional print header for output
 
-print('material           toolDia calc_cl=>overide          rpm=>overide    hfeed vfeed       Hp')
+#print('material           toolDia calc_cl=>overide          rpm=>overide    hfeed vfeed       Hp')
 #rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
-for dia in range(int(tool.toolDia-0),int(tool.toolDia+4),1):
-    tool.toolDia = dia
-    rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
+#for dia in range(int(tool.toolDia-0),int(tool.toolDia+4),1):
+    #tool.toolDia = dia
+    #rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
 
 
 #fsAddon.material = "Softwood"
