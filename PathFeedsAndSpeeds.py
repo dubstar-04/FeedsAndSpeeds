@@ -6,6 +6,7 @@
 
 import math
 from bisect import bisect_right
+import sys
 
 # Interpolate Example from: https://stackoverflow.com/questions/7343697/how-to-implement-linear-interpolation
 
@@ -252,10 +253,10 @@ def load_data(dataFile):
 # --- end csv -----------------------------
 
 class Tool:
-    def __init__(self, toolDia=6, flutes=3):
-
+    def __init__(self, toolDia=6, flutes=3, material='HSS'):
         self.toolDia = toolDia
         self.flutes = flutes
+        self.material = material
 
 
 class Cnc_limits:
@@ -290,31 +291,34 @@ class FSCalculation:
     def get_surface_speed(self):
         #print("material", self.material)
         if self.material:
-            materials = load_materials()
-            surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-            #print("material", self.material, "found ss:", surfaceSpeed)
-            return surfaceSpeed
+            
+            #TODO test behaviour in GUI here & just below for chipload!!!!
+            try:
+                materials = load_materials()
+                surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
+                #print("material", self.material, "found ss:", surfaceSpeed)
+                return surfaceSpeed
+            except:
+                print("Failed to find surfaceSpeed data for Stock material: %s" % (self.material))
 
         return "-"
 
     def get_chipload(self, tool):
         #TODO Look at only loading materials ONCE for cl & ss & ....
-        #TODO need add tool material HSS/carbide...but data not fully in pace & unsure upbout carbide/sintered carbide/carbide+coating....
-            # oops exisiting SF materials <> materials in chiploads.csv!!!!!
-            #AND it is a dictionary {material {2xpair intercept, slope}...& other items}
-                # ......hmm time to expand both shorthad lookup sbelow
-                # ATM lookup by stock material, need add 2nd lookup for tool material
-                # OR JUST SPLIT csv INTO TWO TABLES HSS/CARBIDE!!!
-                #   >>BUT also need decide on keep & THUS *CODE* to use min/max cl linear line values.......
-                # EITHER WAY - need another if self.material: ...but for tool material
         if self.material:
-            chiploads = load_chiploads()
-            max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
-            max_y_slope = next(item for item in chiploads if item["mat group"] == self.material).get("max_b1_slope")
-            chipload = max_y_intercept + tool.toolDia*max_y_slope
-            #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, chipload)
-
-            return chipload
+            if tool.material:
+                chiploads = load_chiploads()
+                #print(chiploads)
+                #print(next(item for item in chiploads))
+                try:
+                    max_y_intercept = next(item for item in chiploads if item["mat group"] == self.material).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in chiploads if (item["mat group"] == self.material) and (item["tool_material"] == tool.material)).get("max_b1_slope")
+                    chipload = max_y_intercept + tool.toolDia*max_y_slope
+                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, chipload)
+                    return chipload
+                except:
+                    print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
+                    sys.exit(1)
 
         return "-"
 

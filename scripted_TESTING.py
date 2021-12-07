@@ -37,6 +37,8 @@ fsAddon.material = "Aluminium (6061)"
 tool = PathFeedsAndSpeeds.Tool()
 tool.toolDia = 3.0
 tool.flutes = 2
+tool.material = 'HSS'   #'HSS';'carbide';'unknown'
+
 fsAddon.WOC = tool.toolDia
 fsAddon.DOC = 1.0
 fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
