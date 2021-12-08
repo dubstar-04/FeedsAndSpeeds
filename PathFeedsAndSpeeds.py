@@ -1,9 +1,6 @@
 # Feed and Speed Calculator
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
-#TODO test on windows eg: path '\' ???
-
-
 import math
 from bisect import bisect_right
 import sys
@@ -189,6 +186,22 @@ def load_diameterFactors():
     }
     return diameterFactors
 
+
+def load_materials():
+    # Data from Machineries Handbook 28.
+    # Kp: Tables 1a, 1b
+    # Brinell Hardness: http://www.matweb.com
+
+    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
+    # ss_cbd = surface speed (m/min) for milling with carbide tools
+    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
+    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
+    # Kd = workMaterialFactor from Table 31
+    # ref: 1 ft/min = 0.3048 m/min
+
+    return load_data('materials_ss_cl.csv')
+
+
 # --- csv -----------------------------
 # From user imm https://forum.freecadweb.org/viewtopic.php?f=15&t=59856&start=50
 import csv
@@ -211,19 +224,6 @@ def rowConvert(h,a):
     res_dct = dict(zip(k, it))
     return res_dct
 
-def load_materials():
-    # Data from Machineries Handbook 28.
-    # Kp: Tables 1a, 1b
-    # Brinell Hardness: http://www.matweb.com
-
-    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
-    # ss_cbd = surface speed (m/min) for milling with carbide tools
-    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
-    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
-    # Kd = workMaterialFactor from Table 31
-    # ref: 1 ft/min = 0.3048 m/min
-
-    return load_data('materials_ss_cl.csv')
 
 def load_data(dataFile):
     import os
@@ -304,7 +304,17 @@ class FSCalculation:
         return "-"
 
     def get_chipload(self, tool):
+        '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
+            At present, just providing a maximum value.
+        '''
         #TODO Look at only loading materials ONCE for cl & ss & ....
+        
+        #TODO *BIGGIE* have some min & max data pairs for chiploads..... so give user a RANGE of outputs!!!!!
+        #        ...have some ranges for susrface speeds as well...btu have not validated/curated/charted data 
+        #        would be good to have similar range for ss (ie rpm)
+        #        ??also integrate in same place...or similar way chip thinning ie ie an optional change/overide??
+        # ....and advice about overides...
+
         if self.material:
             if tool.material:
                 materials = load_materials()
@@ -333,13 +343,9 @@ class FSCalculation:
 
         materials = load_materials()
         #print(materials)
-        #TODO>>>hmmm uncommenting below wrong approach??? 
-        #   instead should be set from init above, or from gui/cmdline script - user sets material ...trigers updates of ss & cl???
-        # ACTUALLY SS IS BEING PASSED!!!!!!!!
-        #   ** pull request #18 in queue as at 2021-12-05 to re-enable next line!!
-        # TEMP TESTING!
-        surfaceSpeed = self.get_surface_speed()
-
+        # ACTUALLY SS IS BEING PASSED IN ...so no need for >>>pull request #18 in queue as at 2021-12-05 to re-enable next line!!
+        #surfaceSpeed = self.get_surface_speed()
+        
         calc_chipload = self.get_chipload(tool)
         # https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
         # https://blog.tormach.com/chip-thinning-cut-aggressively
@@ -353,75 +359,23 @@ class FSCalculation:
             calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
             #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
             calc_chipload = calc_chipload_chip_thin_adjusted
+
+        if self.chipload_overide:
+            orig_chipload = calc_chipload
+            print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
+            #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
+            chipload_thinning_adj = calc_chipload * float(self.chipload_overide) / 100
+            calc_chipload = chipload_thinning_adj
+
         #TODO should above chipload chip thinning "overide" be moved & merged to the direct CL override below
         # ....or below moved/merged here???
-        # HMMM WHICH ORDER TO DO ???
-        # OR SHOULD IT BE ANOTHER IF...in this case 
-            #if chip thin calc > calc_cl - overide
-            #but what about chip thin AND direct user overide (ie direct % reduction as currently coded)????
-                #% of orig, then calc thinning
-                #or should thinning ONLY be calc from orig valaue??
-                #AND WITH EITHER/BOTH ABOVE, AND ALWAYS WITH %OVERIDE IS THERE SOME CHIPLOAD THAT IS TOO SMALL?????
-            #atm THINK BEST TO DO %OVERRIDE first, THEN CHIP THINING WILL INCREASE CL FOR SMALLER WOC
-            # ++extend arrowed -> printing of cl to be 3var & 2x arrows to show order of actions/changes!!
-        
-        #hmmmm forcing % reduction of CL is SORTA like if had reduced WOC 
-        #...but only sorta as amount of tool engaged in cutting NOT changed
-        #however chip thickness has??????????really or too late at night twisted thinking????
-        
-     
-        
-        #TODOs
-            #RELEASE NOTES - incremental for each pull req/ feature
-                #Standalone GUI ie runs without FreeCAD (draft already released. MISSING is imperial units)
-                
-                #Features ONLY avaiable from console at present. Future intent to add to GUI (FreeCAD & Standalone)
-                #csv Load of materials. Also basis for more data, such as Chiploads and user settings, such as CNC limits, Tools.
-                #Collated/curated csv data for chipload calcluation from linear curve fit.
-                #Optional chip thinning chipload adjustment based on common formula eg https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
-                #Notes:
-                    #This is RADIAL chip thinning chipload adjustment, ie not axial as can be calculated for round tip cutters, like ballnose etc
-                    #Adjustment/formula unlikely to work for very small WOC, for example when adjusted chipload becomes significantly larger than WOC.
-                    #Internet 'wisdom' does not sem to provide any definite value/situation for when tool rubbing will occur.
-                    #Above reference site does say that chipload thinning adjustment will "...hopefully {adjust chips to be} thick enough to avoid rubbing".
-                #Combined Chip thinning & Chip thickness overide ++ desc of logic
-                #?? Min chip thickness??????
-                #Demonstration/test script, includes using RPM, SS???? and spindle power to fixed limits  matching a CNC limits.
-                    #Chipload overrides and chip thinning
-
-                # Optional skip rpm overide if rpm is < overide_value (eg stop say a 20mm endmill being overidden from 2000rpm to 10000rpm!)
-                # fsAddon.rpm_overide_reduce_only = True
-
-                #Extended power factor range, using curve fit.
-                #?? dot file & image of calculation inputs, overrides & order (ADD chip thinning AS OPTIONAL, change chipload to be internal data)
-                        
-            #review Generic Materials...poss more overall data...check how much good data per material...
-            #  >>add temp col to flag good/ok/poor data??
-            # and the merge with existing SF materials
-            
-            # SEV more TEST jobs & INCLUDE BCMS cnc jobs/limits
-            # start some new CNC jobs - small ones!!!
-            # tidy/clean up
-            #- priortise infile TODOs ....maybe ditto for TWOxtext file todos
-            #- match both sets materials ...maybe even an extra col in both sets at least temp until decice or GET CONSESUS!!!!
-
-            #>>>++ {tool material} data AND {min max data pairs} IN chipload lookup!!!!!!
-
-            #gui via FC & standalone
-            
-            #wanna push **scripted** overides ...then optional-auto via gui - DAM USEFUL!!!!
-            #- chip thinning
-            #??is there an absolute min??? prob not as everyone just talks about rubbing.....
-            
-            #overide -> printing is GOOD
-            #   need DOC&WOC & >>#Flutes tool material<<< & ????? in output to remind/compare.....
-            #   >>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
-            #   ...fine for my ver but????
-        
-        #TODO chip thinning axial CALCS AS WELL!!!
-            # only for curved bottom tools?? see https://blog.tormach.com/chip-thinning-cut-aggressively
-            # https://www.machiningdoctor.com/calculators/chip-thinning-calculator/
-            #...INCLUDES FOR three DIF ENDMILL SHAPES!!!!
+        # HMMM WHICH ORDER TO DO ? ......OR SHOULD IT BE ANOTHER IF...in this case 
+            # if chip thin calc > calc_cl - overide
+            # but what about chip thin AND direct user overide (ie direct % reduction as currently coded)????
+                # % of orig, then calc thinning
+                # or should thinning ONLY be calc from orig valaue??
+                # AND WITH EITHER/BOTH ABOVE, AND ALWAYS WITH %OVERIDE IS THERE SOME CHIPLOAD THAT IS TOO SMALL?????
+            # atm THINK BEST TO DO %OVERRIDE first, THEN CHIP thinning WILL INCREASE CL FOR SMALLER WOC
         
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
@@ -443,12 +397,6 @@ class FSCalculation:
             #TODO also what about ss & cl overides - similar issue(s)?
             if calc_rpm > float(self.rpm_overide) and self.rpm_overide_reduce_only:
                 calc_rpm = float(self.rpm_overide)
-        if self.chipload_overide:
-            orig_chipload = calc_chipload
-            print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
-            #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
-            chipload_thinning_adj = calc_chipload * float(self.chipload_overide) / 100
-            calc_chipload = chipload_thinning_adj
 
         # Machine Efficiency: Pg 1049
         E = 0.80
