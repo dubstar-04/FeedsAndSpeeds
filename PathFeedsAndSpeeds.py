@@ -273,13 +273,15 @@ class FSCalculation:
 
         self.material = None
         self.rpm_overide = None
+        self.rpm_overide_reduce_only = False
         self.chipload_overide = None
         self.ss_by_material = None
+        
         # Chipload (fpt) is table lookup based on Stock material, Tool Material and Tool dia
         # Then calculates CL = y_inercept + tdia*x_slope
         self.cl_by_mat_tdia_tmat = None
         #self.feedPerTooth = None
-        
+        self.calc_chip_thinning = False
         self.toolWear = None
         self.WOC = None
         self.DOC = None
@@ -339,17 +341,60 @@ class FSCalculation:
         surfaceSpeed = self.get_surface_speed()
 
         calc_chipload = self.get_chipload(tool)
-        #https://shapeokoenthusiasts.gitbook.io/shapeoko-cnc-a-to-z/feeds-and-speeds-basics
-        if self.WOC < 0.5 *  tool.toolDia:
+        # https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
+        # https://blog.tormach.com/chip-thinning-cut-aggressively
+        #   "...hopefully thick enough to avoid rubbing"    {other www say similar - so chip thinning is NOT a magic bullet!}
+        #   "...increase your feedrate so that the actual chipload is equal to your (original recommended for 50% WOC) target"
+        # https://shapeokoenthusiasts.gitbook.io/shapeoko-cnc-a-to-z/feeds-and-speeds-basics
+        if self.calc_chip_thinning and (self.WOC < 0.5 *  tool.toolDia):
+            #TODO what about when WOC gets small, then calc_chipload_chip_thin_adjusted is GREATER than WOC!!!!
+            #>>>># above is prob INCORRECT, as WOC gets small, the chip thinning diag show shallow cut, but APPROX view is????
+            
             calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
             #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
             calc_chipload = calc_chipload_chip_thin_adjusted
         #TODO should above chipload chip thinning "overide" be moved & merged to the direct CL override below
         # ....or below moved/merged here???
+        # HMMM WHICH ORDER TO DO ???
+        # OR SHOULD IT BE ANOTHER IF...in this case 
+            #if chip thin calc > calc_cl - overide
+            #but what about chip thin AND direct user overide (ie direct % reduction as currently coded)????
+                #% of orig, then calc thinning
+                #or should thinning ONLY be calc from orig valaue??
+                #AND WITH EITHER/BOTH ABOVE, AND ALWAYS WITH %OVERIDE IS THERE SOME CHIPLOAD THAT IS TOO SMALL?????
+            #atm THINK BEST TO DO %OVERRIDE first, THEN CHIP THINING WILL INCREASE CL FOR SMALLER WOC
+            # ++extend arrowed -> printing of cl to be 3var & 2x arrows to show order of actions/changes!!
         
+        #hmmmm forcing % reduction of CL is SORTA like if had reduced WOC 
+        #...but only sorta as amount of tool engaged in cutting NOT changed
+        #however chip thickness has??????????really or too late at night twisted thinking????
         
+     
         
         #TODOs
+            #RELEASE NOTES - incremental for each pull req/ feature
+                #Standalone GUI ie runs without FreeCAD (draft already released. MISSING is imperial units)
+                
+                #Features ONLY avaiable from console at present. Future intent to add to GUI (FreeCAD & Standalone)
+                #csv Load of materials. Also basis for more data, such as Chiploads and user settings, such as CNC limits, Tools.
+                #Collated/curated csv data for chipload calcluation from linear curve fit.
+                #Optional chip thinning chipload adjustment based on common formula eg https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
+                #Notes:
+                    #This is RADIAL chip thinning chipload adjustment, ie not axial as can be calculated for round tip cutters, like ballnose etc
+                    #Adjustment/formula unlikely to work for very small WOC, for example when adjusted chipload becomes significantly larger than WOC.
+                    #Internet 'wisdom' does not sem to provide any definite value/situation for when tool rubbing will occur.
+                    #Above reference site does say that chipload thinning adjustment will "...hopefully {adjust chips to be} thick enough to avoid rubbing".
+                #Combined Chip thinning & Chip thickness overide ++ desc of logic
+                #?? Min chip thickness??????
+                #Demonstration/test script, includes using RPM, SS???? and spindle power to fixed limits  matching a CNC limits.
+                    #Chipload overrides and chip thinning
+
+                # Optional skip rpm overide if rpm is < overide_value (eg stop say a 20mm endmill being overidden from 2000rpm to 10000rpm!)
+                # fsAddon.rpm_overide_reduce_only = True
+
+                #Extended power factor range, using curve fit.
+                #?? dot file & image of calculation inputs, overrides & order (ADD chip thinning AS OPTIONAL, change chipload to be internal data)
+                        
             #review Generic Materials...poss more overall data...check how much good data per material...
             #  >>add temp col to flag good/ok/poor data??
             # and the merge with existing SF materials
@@ -361,11 +406,9 @@ class FSCalculation:
             #- match both sets materials ...maybe even an extra col in both sets at least temp until decice or GET CONSESUS!!!!
 
             #>>>++ {tool material} data AND {min max data pairs} IN chipload lookup!!!!!!
-            
+
             #gui via FC & standalone
             
-            #release>>>DO 1Xcsv+materials release{& note immenent relase of chipload csv...}, then 1xchiploads, then powerconstant, .....
-
             #wanna push **scripted** overides ...then optional-auto via gui - DAM USEFUL!!!!
             #- chip thinning
             #??is there an absolute min??? prob not as everyone just talks about rubbing.....
@@ -375,7 +418,10 @@ class FSCalculation:
             #   >>>wanna do better printing ....BUT THAT IS currently in FS calc ...as have access to more vars there!!!!
             #   ...fine for my ver but????
         
-        #TODO add chip thinning calc ,,,potentiall make it an optional calc/change??
+        #TODO chip thinning axial CALCS AS WELL!!!
+            # only for curved bottom tools?? see https://blog.tormach.com/chip-thinning-cut-aggressively
+            # https://www.machiningdoctor.com/calculators/chip-thinning-calculator/
+            #...INCLUDES FOR three DIF ENDMILL SHAPES!!!!
         
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
@@ -391,15 +437,18 @@ class FSCalculation:
 
         if self.rpm_overide:
             #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
-            #Avoid faster rpm than calculated. 
+            #Avoid faster rpm than calculated. Esp for larger dia tools eg 20mm, not likely to want 3,000rpm->10000rpm!!!
             #TODO does this need to be an option, or message to user???
+            #    ...maybe coloured warning highlight of overide field????
             #TODO also what about ss & cl overides - similar issue(s)?
-            if calc_rpm > float(self.rpm_overide):
+            if calc_rpm > float(self.rpm_overide) and self.rpm_overide_reduce_only:
                 calc_rpm = float(self.rpm_overide)
         if self.chipload_overide:
             orig_chipload = calc_chipload
+            print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
             #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
-            calc_chipload = calc_chipload * float(self.chipload_overide) / 100
+            chipload_thinning_adj = calc_chipload * float(self.chipload_overide) / 100
+            calc_chipload = chipload_thinning_adj
 
         # Machine Efficiency: Pg 1049
         E = 0.80
@@ -440,6 +489,6 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
-        print(f'{self.material:18} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
+        print(f'{self.material:18} {self.WOC:2.2f} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{chipload_thinning_adj:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
