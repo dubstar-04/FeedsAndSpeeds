@@ -131,7 +131,6 @@ class FeedSpeedPanel():
         self.form.ss_LE.setValidator(self.onlyInt)
         self.form.rpm_LE.setValidator(self.onlyInt)
 
-        #/if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             self.load_tools()
             self.load_tool_properties()
@@ -162,15 +161,13 @@ class FeedSpeedPanel():
         if app_mode_FCaddon:
             currentTool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
             currentTool.flutes = FreeCAD.Units.Quantity(self.form.flutes_SB.text())
-            currentTool.material = self.form.toolDia_LE.text()
-            cl = self.calculation.get_chipload(currentTool)
         else:
             currentTool.toolDia = float(self.form.toolDia_LE.text())
             currentTool.flutes = int(self.form.flutes_SB.text())
-            currentTool.material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
-            #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
-            cl = self.calculation.get_chipload(currentTool)
-        # FIXME temp cludge to cope with none value of cl if cl not found!
+        currentTool.material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
+        #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
+        cl = self.calculation.get_chipload(currentTool)
+        # FIXME temp cludge to **TRYING TO** ie NOT FIXED YET cope with none value of cl if cl not found!
         print ('chipload: ', cl)
         if cl:
             self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
