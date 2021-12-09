@@ -50,7 +50,7 @@ fsAddon.toolWear = 1.1                      ## Tool Wear pg: 1048
 fsAddon.ss_by_material = "ss_hss"           # "ss_hss" "ss_cbd"
 fsAddon.rpm_overide = 10000
 fsAddon.chipload_overide = 50   #trying percentage reduction!!!!
-#print('fsAddon.chipload_overide = 25 ')
+#print('fsAddon.chipload_overide')
 fsAddon.material = "Aluminium (6061)"   #"Hardwood"   #Softwood"   #"Aluminium (6061)"
 
 # test#1 chip thinning calc
