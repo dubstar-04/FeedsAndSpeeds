@@ -71,7 +71,6 @@ print(path_to_ui)
 class FeedSpeedPanel():
     def __init__(self):
         # Build GUI
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
             #loadUi(ui_name, self)
@@ -111,7 +110,6 @@ class FeedSpeedPanel():
         self.form.DOC_SP.textChanged.connect(self.calculate)
         self.form.ss_LE.textChanged.connect(self.calculate)
         self.form.rpm_LE.textChanged.connect(self.calculate)
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
             self.form.update_PB.clicked.connect(self.update_tool_controller)
@@ -198,7 +196,6 @@ class FeedSpeedPanel():
             print("tool props:", dia, flutes, material, chipload)
 
     def get_tool_controller(self):
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
             tcStr = self.form.toolController_CB.currentText()
@@ -235,7 +232,6 @@ class FeedSpeedPanel():
         else:
             self.form.rpm_result.setEnabled(True)
 
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             tool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
             tool.flutes = int(self.form.flutes_SB.value())
@@ -269,14 +265,12 @@ class FeedSpeedPanel():
             #print(hfeed, vfeed, int(watts), rpm)
 
     def show(self):
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             self.form.exec_()
         else:
             self.form.show()
 
     def reject(self):
-        #if FeedsAndSpeedsConfig.app_mode_FCaddon:
         if app_mode_FCaddon:
             FreeCAD.Console.PrintMessage("Reject Signal")
         self.quit()
