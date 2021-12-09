@@ -291,7 +291,8 @@ class FSCalculation:
                     return chipload
                 except:
                     print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
-                    sys.exit(1)
+                    #sys.exit(1)
+                    return None
 
         return "-"
 

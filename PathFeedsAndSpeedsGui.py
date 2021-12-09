@@ -168,10 +168,14 @@ class FeedSpeedPanel():
             currentTool.toolDia = float(self.form.toolDia_LE.text())
             currentTool.flutes = int(self.form.flutes_SB.text())
             currentTool.material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
-            print(currentTool.toolDia, currentTool.flutes, currentTool.material)
+            #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
             cl = self.calculation.get_chipload(currentTool)
-
-        self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
+        # FIXME temp cludge to cope with none value of cl if cl not found!
+        print ('chipload: ', cl)
+        if cl:
+            self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
+        else:
+            self.form.FPT_SB.setValue(0.01)
         self.calculate
 
     def set_tool_material(self):
@@ -261,9 +265,11 @@ class FeedSpeedPanel():
         self.form.hfeed_result.setText(str(hfeed) + " mm/min")
         self.form.vfeed_result.setText(str(vfeed) + " mm/min")
         self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
-        if app_mode_FCaddon == False:
+        
+        # currently printing in FSCalculation.calculate
+        #if app_mode_FCaddon == False:
             # For standalone print outputs to console
-            print(hfeed, vfeed, int(watts), rpm)
+            #print(hfeed, vfeed, int(watts), rpm)
 
     def show(self):
         #if FeedsAndSpeedsConfig.app_mode_FCaddon:
