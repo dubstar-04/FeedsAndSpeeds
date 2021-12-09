@@ -169,6 +169,9 @@ def load_materials():
     return load_data('materials_ss_cl.csv')
 
 
+def load_tools_standalone_only():
+    return load_data('tools_standalone_only.csv')
+
 # --- csv -----------------------------
 # From user imm https://forum.freecadweb.org/viewtopic.php?f=15&t=59856&start=50
 import csv

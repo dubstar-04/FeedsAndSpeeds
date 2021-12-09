@@ -129,8 +129,9 @@ class FeedSpeedPanel():
         self.form.ss_LE.setValidator(self.onlyInt)
         self.form.rpm_LE.setValidator(self.onlyInt)
 
+        #FIXME ...finish testing/coding for tools FC/standalone modes
+        self.load_tools()
         if app_mode_FCaddon:
-            self.load_tools()
             self.load_tool_properties()
         self.set_tool_material()
         self.set_material()
@@ -177,11 +178,22 @@ class FeedSpeedPanel():
         self.calculation.ss_by_material = "ss_hss" if self.form.hss_RB.isChecked() else "ss_cbd"
 
     def load_tools(self):
-        jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
-        # self.form.toolController_CB.addItem('None')
-        for job in jobs:
-            for idx, tc in enumerate(job.Tools.Group):
-                self.form.toolController_CB.addItem(tc.Label)
+        if app_mode_FCaddon:
+            jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
+            # self.form.toolController_CB.addItem('None')
+            for job in jobs:
+                for idx, tc in enumerate(job.Tools.Group):
+                    self.form.toolController_CB.addItem(tc.Label)
+        else:
+            tools_sa = PathFeedsAndSpeeds.load_tools_standalone_only()
+            for rowDict in tools_sa:
+                tool_sa = PathFeedsAndSpeeds.Tool()
+                tool_sa.name = rowDict["name"]
+                tool_sa.toolDia = rowDict["dia"]
+                tool_sa.flutes = rowDict["flutes"]
+                tool_sa.material = rowDict["material"]
+                self.form.toolController_CB.addItem(tool_sa.name)
+                #print(tool_sa.name, tool_sa.toolDia, tool_sa.flutes, tool_sa.material)
 
     def load_tool_properties(self):
         tc = self.get_tool_controller()
@@ -203,20 +215,35 @@ class FeedSpeedPanel():
                 for tc in job.Tools.Group:
                     if tc.Label == tcStr:
                         return tc
+        else:
+            tools_sa = PathFeedsAndSpeeds.load_tools_standalone_only()
+            for rowDict in tools_sa:
+                tool_sa = PathFeedsAndSpeeds.Tool()
+                tool_sa.name = rowDict["name"]
+                if tool_sa.name == tcStr:
+                    print('matched tool names', tool_sa.name)
+                    tool_sa.toolDia = rowDict["dia"]
+                    tool_sa.flutes = rowDict["flutes"]
+                    tool_sa.material = rowDict["material"]
+                        return tool_sa
+            
 
         return None
 
     def update_tool_controller(self):
-        tc = self.get_tool_controller()
+        if app_mode_FCaddon:
+            tc = self.get_tool_controller()
 
-        if tc:
-            rpm = self.form.rpm_result.text()
-            hfeed = self.form.hfeed_result.text()
-            vfeed = self.form.vfeed_result.text()
-            # TODO: Add a confirmation dialog
-            tc.HorizFeed = hfeed
-            tc.VertFeed = vfeed
-            tc.SpindleSpeed = float(rpm)
+            if tc:
+                rpm = self.form.rpm_result.text()
+                hfeed = self.form.hfeed_result.text()
+                vfeed = self.form.vfeed_result.text()
+                # TODO: Add a confirmation dialog
+                tc.HorizFeed = hfeed
+                tc.VertFeed = vfeed
+                tc.SpindleSpeed = float(rpm)
+        #else:
+        # No Tool (controller) update as FreeCAD not running in standalone mode
 
     def calculate(self):
         if self.calculation.material is None:

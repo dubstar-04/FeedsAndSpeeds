@@ -53,6 +53,26 @@ fsAddon.chipload_overide = 50   #trying percentage reduction!!!!
 #print('fsAddon.chipload_overide')
 fsAddon.material = "Aluminium (6061)"   #"Hardwood"   #Softwood"   #"Aluminium (6061)"
 
+
+tools_sa = PathFeedsAndSpeeds.load_tools_standalone_only()
+#print(tools_sa)
+
+#gui code
+def load_tools_sa():
+	# if fc gui mode....
+	#else: ie standalone
+	for rowDict in tools_sa:
+		tool_sa = PathFeedsAndSpeeds.Tool()
+		tool_sa.name = rowDict["name"]
+		tool_sa.toolDia = rowDict["dia"]
+		tool_sa.flutes = rowDict["flutes"]
+		tool_sa.material = rowDict["material"]
+
+		#self.form.toolController_CB.addItem(tc.Label)
+		print(tool_sa.name, tool_sa.toolDia, tool_sa.flutes, tool_sa.material)
+
+load_tools_sa()
+
 # test#1 chip thinning calc
 print('                                 ChipLoad                                                         ')
 print('material            woc  toolDia calc=>thinning=>overide         rpm=>overide     hfeed vfeed       Watts')
@@ -63,6 +83,7 @@ fsAddon.calc_chip_thinning = True
 for woc in woclist:
     fsAddon.WOC = woc
     rpm, feed, vfeed, Hp = fsAddon.calculate(tool, fsAddon.get_surface_speed()) 
+
 
 
 # Original calculator behaviour WITH overides !!!!!!!
