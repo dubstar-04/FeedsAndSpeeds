@@ -3,6 +3,7 @@
 
 import math
 from bisect import bisect_right
+import sys
 
 # Interpolate Example from: https://stackoverflow.com/questions/7343697/how-to-implement-linear-interpolation
 
@@ -36,37 +37,9 @@ def getInterpolatedValue(inputDict, value):
         return None
 
 
-def load_materials():
-    # Data from Machineries Handbook 28.
-    # Kp: Tables 1a, 1b
-    # Brinell Hardness: http://www.matweb.com
 
-    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
-    # ss_cbd = surface speed (m/min) for milling with carbide tools
-    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
-    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
-    # Kd = workMaterialFactor from Table 31
-    # ref: 1 ft/min = 0.3048 m/min
 
-    materials = [
-        {"material": "Softwood",                 "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 3000},  # noqa: E241
-        {"material": "Hardwood",                 "ss_hss": 145,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 4000},  # noqa: E241
-        {"material": "Soft Plastics",            "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Hard Plastics",            "ss_hss": 225,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Aluminium (6061)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 95,    "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (7075)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 125,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (Cast)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.68,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Brass (Hard)",             "ss_hss": 200,  "ss_cbd": 395,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 2.27,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Medium)",           "ss_hss": 175,  "ss_cbd": 350,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 1.36,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Soft)",             "ss_hss": 125,  "ss_cbd": 300,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 0.68,     "brinell": 120,   "Kd": 7000},  # noqa: E241
-        {"material": "Carbon Steel",             "ss_hss": 35,   "ss_cbd": 120,   "ss_drill_hss": 25,    "ss_drill_cbd": 90,     "kp": 1.88,     "brinell": 130,   "Kd": 24000},  # noqa: E241
-        {"material": "Tool Steel",               "ss_hss": 12,   "ss_cbd": 45,    "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 1.88,     "brinell": 400,   "Kd": 340000},  # noqa: E241
-        {"material": "Stainless (303)",          "ss_hss": 25,   "ss_cbd": 85,    "ss_drill_hss": 20,    "ss_drill_cbd": 65,     "kp": 2.07,     "brinell": 200,   "Kd": 200000},  # noqa: E241
-        {"material": "Stainless (304)",          "ss_hss": 10,   "ss_cbd": 37.5,  "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 2.07,     "brinell": 125,   "Kd": 22000},  # noqa: E241
-        {"material": "Stainless (316)",          "ss_hss": 7.5,  "ss_cbd": 25,    "ss_drill_hss": 5,     "ss_drill_cbd": 20,     "kp": 2.07,     "brinell": 80,    "Kd": 24000},  # noqa: E241
-    ]
 
-    return materials
 
 
 def load_powerConstant():
@@ -186,10 +159,10 @@ def load_diameterFactors():
 
 
 class Tool:
-    def __init__(self, toolDia=6, flutes=3):
-
+    def __init__(self, toolDia=6, flutes=3, material='HSS'):
         self.toolDia = toolDia
         self.flutes = flutes
+        self.material = material
 
 
 class Cnc_limits:
@@ -209,9 +182,16 @@ class FSCalculation:
 
         self.material = None
         self.rpm_overide = None
+        self.rpm_overide_reduce_only = False
+        self.chipload_overide = None
         self.ss_by_material = None
+        
+        # Chipload (fpt) is table lookup based on Stock material, Tool Material and Tool dia
+        # Then calculates CL = y_inercept + tdia*x_slope
+        self.cl_by_mat_tdia_tmat = None
+        #self.feedPerTooth = None
+        self.calc_chip_thinning = False
         self.toolWear = None
-        self.feedPerTooth = None
         self.WOC = None
         self.DOC = None
         self.limits = None
@@ -226,6 +206,31 @@ class FSCalculation:
 
         return "-"
 
+    def get_chipload(self, tool):
+        '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
+            At present, just providing a maximum value.
+        '''
+        if self.material:
+            if tool.material:
+                materials = load_materials()
+                #print(materials)
+                #print(next(item for item in materials))
+                #TODO test behaviour in GUI here & just below for chipload!!!!
+                # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
+                try:
+                    #mat group
+                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
+                    #print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
+                    chipload = max_y_intercept + tool.toolDia*max_y_slope
+                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
+                    return chipload
+                except:
+                    print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
+                    sys.exit(1)
+
+        return "-"
+
     def set_material(self, material):
         self.material = material
 
@@ -233,31 +238,70 @@ class FSCalculation:
 
         materials = load_materials()
         # surfaceSpeed = self.get_surface_speed()
+
+        calc_chipload = self.get_chipload(tool)
+        # intermediate/temp values used to show flow/effects of chip thinning adjustment &/or chip thinning overide
+        orig_chipload = calc_chipload
+        calc_chipload_chip_thin_adjusted = calc_chipload
+        
+        # https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
+        # https://blog.tormach.com/chip-thinning-cut-aggressively
+        #   "...hopefully thick enough to avoid rubbing"    {other www say similar - so chip thinning is NOT a magic bullet!}
+        #   "...increase your feedrate so that the actual chipload is equal to your (original recommended for 50% WOC) target"
+        # https://shapeokoenthusiasts.gitbook.io/shapeoko-cnc-a-to-z/feeds-and-speeds-basics
+        if self.calc_chip_thinning and (self.WOC < 0.5 *  tool.toolDia):
+            #TODO what about when WOC gets small, then calc_chipload_chip_thin_adjusted is GREATER than WOC!!!!
+            #>>>># above is prob INCORRECT, as WOC gets small, the chip thinning diag show shallow cut, but APPROX view is????
+            # ...or just one of MANY vars/parts of this calculator where "extreme" situations/settings/values produce "unreliable" results!
+            # eg extremely large or small dia tool bits => chipload, load_powerConstant if chipload < 0.02 or > 1.5 
+            # Extreme overides of SS or chipload also will casue issues.
+            # ....so doco as general advice ....better if have warnigns in danger settings/vars....
+            calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
+            #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
+            calc_chipload = calc_chipload_chip_thin_adjusted
+
+        if self.chipload_overide:
+            #print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
+            #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
+            chipload_overide = calc_chipload * float(self.chipload_overide) / 100
+            calc_chipload = chipload_overide
+        #TODO should above chipload chip thinning "overide" & chipload_overide be merged??
+
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         # C = Power Constant
-        C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
+        C = getInterpolatedValue(load_powerConstant(), calc_chipload)    #self.feedPerTooth)
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
         calc_rpm = rpm
 
         if self.rpm_overide:
-            calc_rpm = float(self.rpm_overide)
+            if calc_rpm > float(self.rpm_overide) and self.rpm_overide_reduce_only:
+                #Avoid faster rpm than calculated. Esp for larger dia tools eg 20mm, not likely to want 3,000rpm->10000rpm!!!
+                #TODO does this need to be an option, or message to user???
+                #    ...maybe coloured warning highlight of overide field????
+                #TODO also what about ss & cl overides - similar issue(s)?
+                calc_rpm = float(self.rpm_overide)
+            if not self.rpm_overide_reduce_only:
+                # Force overide if user has not enabled rpm_overide_reduce_only, might reduce, or might increase rpm.
+                calc_rpm = float(self.rpm_overide)
 
         # Machine Efficiency: Pg 1049
         E = 0.80
 
         # Machining Power
         # Horizontal Feed
-        hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
+        #hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
+        hfeed = int(calc_rpm * calc_chipload * tool.flutes)
         # Calculation to Machineries Handbook: Pg 1058
         # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
         # Material Removal Rate: Pg 1049
         Q = float((self.WOC * self.DOC * hfeed) / 60000)  # cm^3/s
-        # print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
+        #print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
         # Power Required at the cutter: Pg 1048
         Pc = Kp * C * Q * self.toolWear
 
         # Vertical Feed
-        vfeed = int(self.feedPerTooth * calc_rpm)
+        #vfeed = int(self.feedPerTooth * calc_rpm)
+        vfeed = int(calc_chipload * calc_rpm)
         # Kd = Work material factor (Table 31)
         # Ff = Feed factor (Table 33)
         # FM = Torque factor for drill diameter (Table 34)
@@ -279,5 +323,7 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
+
+        print(f'{self.material:18} {self.WOC:2.2f} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
