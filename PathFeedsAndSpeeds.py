@@ -347,6 +347,10 @@ class FSCalculation:
         #surfaceSpeed = self.get_surface_speed()
         
         calc_chipload = self.get_chipload(tool)
+        # intermediate/temp values used to show flow/effects of chip thinning adjustment &/or chip thinning overide
+        orig_chipload = calc_chipload
+        calc_chipload_chip_thin_adjusted = calc_chipload
+        
         # https://www.harveyperformance.com/in-the-loupe/combat-chip-thinning/
         # https://blog.tormach.com/chip-thinning-cut-aggressively
         #   "...hopefully thick enough to avoid rubbing"    {other www say similar - so chip thinning is NOT a magic bullet!}
@@ -355,28 +359,21 @@ class FSCalculation:
         if self.calc_chip_thinning and (self.WOC < 0.5 *  tool.toolDia):
             #TODO what about when WOC gets small, then calc_chipload_chip_thin_adjusted is GREATER than WOC!!!!
             #>>>># above is prob INCORRECT, as WOC gets small, the chip thinning diag show shallow cut, but APPROX view is????
-            
+            # ...or just one of MANY vars/parts of this calculator where "extreme" situations/settings/values produce "unreliable" results!
+            # eg extremely large or small dia tool bits => chipload, load_powerConstant if chipload < 0.02 or > 1.5 
+            # Extreme overides of SS or chipload also will casue issues.
+            # ....so doco as general advice ....better if have warnigns in danger settings/vars....
             calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
             #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
             calc_chipload = calc_chipload_chip_thin_adjusted
 
         if self.chipload_overide:
-            orig_chipload = calc_chipload
-            print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
+            #print ('\t\t\t\t\tv ATM chip thinning overides, the chipload overide value!!! ...oops???')
             #print("calc_chipload", calc_chipload, ' to ', calc_chipload * float(self.chipload_overide) / 100)
-            chipload_thinning_adj = calc_chipload * float(self.chipload_overide) / 100
-            calc_chipload = chipload_thinning_adj
+            chipload_overide = calc_chipload * float(self.chipload_overide) / 100
+            calc_chipload = chipload_overide
+        #TODO should above chipload chip thinning "overide" & chipload_overide be merged??
 
-        #TODO should above chipload chip thinning "overide" be moved & merged to the direct CL override below
-        # ....or below moved/merged here???
-        # HMMM WHICH ORDER TO DO ? ......OR SHOULD IT BE ANOTHER IF...in this case 
-            # if chip thin calc > calc_cl - overide
-            # but what about chip thin AND direct user overide (ie direct % reduction as currently coded)????
-                # % of orig, then calc thinning
-                # or should thinning ONLY be calc from orig valaue??
-                # AND WITH EITHER/BOTH ABOVE, AND ALWAYS WITH %OVERIDE IS THERE SOME CHIPLOAD THAT IS TOO SMALL?????
-            # atm THINK BEST TO DO %OVERRIDE first, THEN CHIP thinning WILL INCREASE CL FOR SMALLER WOC
-        
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
         
         #TODO Have mapped power curve for Power Constant: See "mc hb machining power p1057 table 2 feed factors for power const C.ods"
@@ -390,12 +387,14 @@ class FSCalculation:
         calc_rpm = rpm
 
         if self.rpm_overide:
-            #print("rpm_overide", calc_rpm, ' to ', self.rpm_overide)
-            #Avoid faster rpm than calculated. Esp for larger dia tools eg 20mm, not likely to want 3,000rpm->10000rpm!!!
-            #TODO does this need to be an option, or message to user???
-            #    ...maybe coloured warning highlight of overide field????
-            #TODO also what about ss & cl overides - similar issue(s)?
             if calc_rpm > float(self.rpm_overide) and self.rpm_overide_reduce_only:
+                #Avoid faster rpm than calculated. Esp for larger dia tools eg 20mm, not likely to want 3,000rpm->10000rpm!!!
+                #TODO does this need to be an option, or message to user???
+                #    ...maybe coloured warning highlight of overide field????
+                #TODO also what about ss & cl overides - similar issue(s)?
+                calc_rpm = float(self.rpm_overide)
+            if not self.rpm_overide_reduce_only:
+                # Force overide if user has not enabled rpm_overide_reduce_only, might reduce, or might increase rpm.
                 calc_rpm = float(self.rpm_overide)
 
         # Machine Efficiency: Pg 1049
@@ -437,6 +436,7 @@ class FSCalculation:
         Pm = Pc / E
         # Convert to Hp
         Hp = Pm * 1.341
-        print(f'{self.material:18} {self.WOC:2.2f} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{chipload_thinning_adj:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
+
+        print(f'{self.material:18} {self.WOC:2.2f} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp
