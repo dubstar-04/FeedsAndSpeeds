@@ -157,8 +157,21 @@ class FeedSpeedPanel():
         self.calculation.set_material(material)
         ss = self.calculation.get_surface_speed()
         self.form.ss_LE.setText(str(ss))
-        cl = self.calculation.get_chipload(FreeCAD.Units.Quantity(self.form.toolDia_LE.text()))
-        self.form.FPT_SB.setValue(0.01)   #TODO hopefully just need cl value 
+        
+        currentTool = PathFeedsAndSpeeds.Tool()
+        if app_mode_FCaddon:
+            currentTool.toolDia = FreeCAD.Units.Quantity(self.form.toolDia_LE.text())
+            currentTool.flutes = FreeCAD.Units.Quantity(self.form.flutes_SB.text())
+            currentTool.material = self.form.toolDia_LE.text()
+            cl = self.calculation.get_chipload(currentTool)
+        else:
+            currentTool.toolDia = float(self.form.toolDia_LE.text())
+            currentTool.flutes = int(self.form.flutes_SB.text())
+            currentTool.material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
+            print(currentTool.toolDia, currentTool.flutes, currentTool.material)
+            cl = self.calculation.get_chipload(currentTool)
+
+        self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
         self.calculate
 
     def set_tool_material(self):

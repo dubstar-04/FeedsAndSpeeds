@@ -274,39 +274,6 @@ class FSCalculation:
         '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
             At present, just providing a maximum value.
         '''
-        #TODO Look at only loading materials ONCE for cl & ss & ....
-        
-        #TODO *BIGGIE* have some min & max data pairs for chiploads..... so give user a RANGE of outputs!!!!!
-        #        ...have some ranges for susrface speeds as well...btu have not validated/curated/charted data 
-        #        would be good to have similar range for ss (ie rpm)
-        #        ??also integrate in same place...or similar way chip thinning ie ie an optional change/overide??
-        # ....and advice about overides...
-
-        if self.material:
-            if tool.material:
-                materials = load_materials()
-                #print(materials)
-                #print(next(item for item in materials))
-                #TODO test behaviour in GUI here & just below for chipload!!!!
-                # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
-                try:
-                    #mat group
-                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
-                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
-                    #print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
-                    chipload = max_y_intercept + tool.toolDia*max_y_slope
-                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
-                    return chipload
-                except:
-                    print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
-                    sys.exit(1)
-
-        return "-"
-
-    def get_chipload(self, tool):
-        '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
-            At present, just providing a maximum value.
-        '''
         if self.material:
             if tool.material:
                 materials = load_materials()
