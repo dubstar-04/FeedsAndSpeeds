@@ -33,13 +33,9 @@ def getInterpolatedValue(inputDict, value):
     try:
         return interpolation(value)
     except:
+        #TODO should pass in & print here WHICH var was looking up!!!!
         print("Interpolated value outside the expected range")
         return None
-
-
-
-
-
 
 
 def load_powerConstant():
@@ -158,6 +154,68 @@ def load_diameterFactors():
     return diameterFactors
 
 
+def load_materials():
+    # Data from Machineries Handbook 28.
+    # Kp: Tables 1a, 1b
+    # Brinell Hardness: http://www.matweb.com
+
+    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
+    # ss_cbd = surface speed (m/min) for milling with carbide tools
+    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
+    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
+    # Kd = workMaterialFactor from Table 31
+    # ref: 1 ft/min = 0.3048 m/min
+
+    return load_data('materials_ss_cl.csv')
+
+
+# --- csv -----------------------------
+# From user imm https://forum.freecadweb.org/viewtopic.php?f=15&t=59856&start=50
+import csv
+# -- any numeric value that can be converted to float is converted to float.
+def fitem(item):
+    item.strip()
+    try:
+        item=float(item)
+    except ValueError:
+        pass
+    return item
+
+# -- takes a header list and row list converts it into a dict. Numeric values converted to float in the row list wherever possible. 
+def rowConvert(h,a):
+    b=[]
+    for x in a:
+        b.append(fitem(x))
+    k = iter(h)
+    it = iter(b)
+    res_dct = dict(zip(k, it))
+    return res_dct
+
+
+def load_data(dataFile):
+    import os
+    p = os.path.dirname(__file__)
+    #TODO windows path '\' ???
+    filename = p + '/' + dataFile
+
+    dataDict=[]
+    with open(filename,'r') as csvin:
+        alist=list(csv.reader(csvin))
+        firstLine = True
+        for a in alist:
+            if firstLine:
+                if len(a) == 0: continue
+                if len(a) == 1: continue
+                else:
+                    h = a
+                    firstLine = False
+            else:
+                # print(rowConvert(h,a))
+                dataDict.append(rowConvert(h,a))
+
+    return dataDict
+# --- end csv -----------------------------
+
 class Tool:
     def __init__(self, toolDia=6, flutes=3, material='HSS'):
         self.toolDia = toolDia
@@ -197,12 +255,51 @@ class FSCalculation:
         self.limits = None
 
     def get_surface_speed(self):
-        print("material", self.material)
+        #print("material", self.material)
         if self.material:
-            materials = load_materials()
-            surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-            print("found ss:", surfaceSpeed)
-            return surfaceSpeed
+            
+            #TODO test behaviour in GUI here & just below for chipload!!!!
+            # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
+            try:
+                materials = load_materials()
+                surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
+                #print("material", self.material, "found ss:", surfaceSpeed)
+                return surfaceSpeed
+            except:
+                print("Failed to find surfaceSpeed data for Stock material: %s" % (self.material))
+
+        return "-"
+
+    def get_chipload(self, tool):
+        '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
+            At present, just providing a maximum value.
+        '''
+        #TODO Look at only loading materials ONCE for cl & ss & ....
+        
+        #TODO *BIGGIE* have some min & max data pairs for chiploads..... so give user a RANGE of outputs!!!!!
+        #        ...have some ranges for susrface speeds as well...btu have not validated/curated/charted data 
+        #        would be good to have similar range for ss (ie rpm)
+        #        ??also integrate in same place...or similar way chip thinning ie ie an optional change/overide??
+        # ....and advice about overides...
+
+        if self.material:
+            if tool.material:
+                materials = load_materials()
+                #print(materials)
+                #print(next(item for item in materials))
+                #TODO test behaviour in GUI here & just below for chipload!!!!
+                # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
+                try:
+                    #mat group
+                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
+                    #print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
+                    chipload = max_y_intercept + tool.toolDia*max_y_slope
+                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
+                    return chipload
+                except:
+                    print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
+                    sys.exit(1)
 
         return "-"
 
@@ -237,8 +334,10 @@ class FSCalculation:
     def calculate(self, tool, surfaceSpeed):
 
         materials = load_materials()
-        # surfaceSpeed = self.get_surface_speed()
-
+        #print(materials)
+        # ACTUALLY SS IS BEING PASSED IN ...so no need for >>>pull request #18 in queue as at 2021-12-05 to re-enable next line!!
+        #surfaceSpeed = self.get_surface_speed()
+        
         calc_chipload = self.get_chipload(tool)
         # intermediate/temp values used to show flow/effects of chip thinning adjustment &/or chip thinning overide
         orig_chipload = calc_chipload
@@ -268,6 +367,12 @@ class FSCalculation:
         #TODO should above chipload chip thinning "overide" & chipload_overide be merged??
 
         Kp = next(item for item in materials if item["material"] == self.material).get("kp")
+        
+        #TODO Have mapped power curve for Power Constant: See "mc hb machining power p1057 table 2 feed factors for power const C.ods"
+        #       ...so can replace interp with equation C = 0.785015843093532 * ChipLoad^-0.197425892437151 (^ = raised to power of..)
+        #               above #s for metric. Curve fit look v good, but smaller ChipLoad are gunna be less accurate
+        #                   1. curve goes up v v sharp for small vaules, so small varations = larger error
+        #                   2. chip thinning & min possible chip thickness...
         # C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), calc_chipload)    #self.feedPerTooth)
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
