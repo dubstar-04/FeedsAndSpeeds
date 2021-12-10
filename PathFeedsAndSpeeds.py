@@ -219,7 +219,7 @@ def load_data(dataFile):
     return dataDict
 # --- end csv -----------------------------
 
-# Updated var names to match those of FreeCAD ToolController.Tool to ease satandalone code.
+# Updated var names to match those of FreeCAD ToolController.Tool to ease standalone code.
 class Tool:
     def __init__(self, Diameter=6, Flutes=3, Material='HSS'):
         self.Diameter = Diameter
@@ -408,6 +408,8 @@ class FSCalculation:
         # Convert to Hp
         Hp = Pm * 1.341
 
-        print(f'{self.material:18} {self.WOC:2.2f} {tool.Diameter:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
+        # below was fine, then nop changes to WOC, but had to change to float(self.WOC)
+        # to avoid error "TypeError: unsupported format string passed to Base.Quantity.__format__"
+        print(f'{self.material:18} {float(self.WOC):2.2f} {tool.Diameter:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp

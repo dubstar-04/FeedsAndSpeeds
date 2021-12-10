@@ -167,7 +167,7 @@ class FeedSpeedPanel():
         #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
         cl = self.calculation.get_chipload(currentTool)
         # FIXME temp cludge to **TRYING TO** ie NOT FIXED YET cope with none value of cl if cl not found!
-        print ('chipload: ', cl)
+        #print ('chipload: ', cl)
         if cl:
             self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
         else:
@@ -322,8 +322,8 @@ def Show():
 
     panel = FeedSpeedPanel()
     try: 
-        print (panel)
-        print (panel.form)
+        #print (panel)
+        #print (panel.form)
         panel.form.exec_()
         #panel.show()
     except Exception as err:
