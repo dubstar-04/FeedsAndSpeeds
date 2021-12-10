@@ -219,11 +219,19 @@ def load_data(dataFile):
     return dataDict
 # --- end csv -----------------------------
 
+# Updated var names to match those of FreeCAD ToolController.Tool to ease satandalone code.
 class Tool:
-    def __init__(self, toolDia=6, flutes=3, material='HSS'):
-        self.toolDia = toolDia
-        self.flutes = flutes
-        self.material = material
+    def __init__(self, Diameter=6, Flutes=3, Material='HSS'):
+        self.Diameter = Diameter
+        self.Flutes = Flutes
+        self.Material = Material
+
+		#obj = App.getDocument("DSG12H_leadnut_block_vD_005_2021_09_29").getObject("TC__T4001")
+		#obj.PropertiesList
+		#['ExpressionEngine', 'HorizFeed', 'HorizRapid', 'Label', 'Label2', 'Path', 'Placement', 'Proxy', 'SpindleDir', 'SpindleSpeed', 'Tool', 'ToolNumber', 'VertFeed', 'VertRapid', 'Visibility']
+
+		#obj.Tool.PropertiesList
+		#['BitBody', 'BitPropertyNames', 'BitShape', 'Chipload', 'CuttingEdgeHeight', 'Diameter', 'ExpressionEngine', 'File', 'Flutes', 'Label', 'Label2', 'Length', 'Material', 'Placement', 'Proxy', 'ShankDiameter', 'Shape', 'ShapeName', 'Visibility']
 
 
 class Cnc_limits:
@@ -247,7 +255,7 @@ class FSCalculation:
         self.chipload_overide = None
         self.ss_by_material = None
         
-        # Chipload (fpt) is table lookup based on Stock material, Tool Material and Tool dia
+        # Chipload (fpt) is table lookup based on Stock Material, Tool Material and Tool dia
         # Then calculates CL = y_inercept + tdia*x_slope
         self.cl_by_mat_tdia_tmat = None
         #self.feedPerTooth = None
@@ -258,7 +266,7 @@ class FSCalculation:
         self.limits = None
 
     def get_surface_speed(self):
-        #print("material", self.material)
+        #print("Material", self.material)
         if self.material:
             
             #TODO test behaviour in GUI here & just below for chipload!!!!
@@ -266,34 +274,34 @@ class FSCalculation:
             try:
                 materials = load_materials()
                 surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-                #print("material", self.material, "found ss:", surfaceSpeed)
+                #print("Material", self.material, "found ss:", surfaceSpeed)
                 return surfaceSpeed
             except:
-                print("Failed to find surfaceSpeed data for Stock material: %s" % (self.material))
+                print("Failed to find surfaceSpeed data for Stock Material: %s" % (self.material))
 
         return "-"
 
     def get_chipload(self, tool):
-        '''Calculate recommended chipload based Stock & Tool materials and Tool Diameter
+        '''Calculate recommended chipload based Stock & Tool Materials and Tool Diameter
             At present, just providing a maximum value.
         '''
         if self.material:
-            if tool.material:
+            if tool.Material:
                 materials = load_materials()
                 #print(materials)
-                #print(next(item for item in materials))
+                #print(next(item for item in Materials))
                 #TODO test behaviour in GUI here & just below for chipload!!!!
                 # MAYBE just print msg & DO NOT exit ....similar behaviour to interp method...although then later a calc can crash!!
                 try:
                     #mat group
-                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b0_y_intercept")
-                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.material))).get("max_b1_slope")
-                    #print('chipload data', max_y_intercept, max_y_slope, tool.toolDia, tool.material)
-                    chipload = max_y_intercept + tool.toolDia*max_y_slope
-                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.toolDia, tool.material, chipload)
+                    max_y_intercept = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.Material))).get("max_b0_y_intercept")
+                    max_y_slope = next(item for item in materials if ((item["material"] == self.material) and (item["tool_material"] == tool.Material))).get("max_b1_slope")
+                    #print('chipload data', max_y_intercept, max_y_slope, tool.Diameter, tool.Material)
+                    chipload = max_y_intercept + tool.Diameter*max_y_slope
+                    #print('calculated chipload ', max_y_intercept, max_y_slope, tool.Diameter, tool.Material, chipload)
                     return chipload
                 except:
-                    print("Failed to find Chipload data for Stock material: %s & Tool material: %s" % (self.material, tool.material))
+                    print("Failed to find Chipload data for Stock Material: %s & Tool Material: %s" % (self.material, tool.Material))
                     #sys.exit(1)
                     return None
 
@@ -319,15 +327,15 @@ class FSCalculation:
         #   "...hopefully thick enough to avoid rubbing"    {other www say similar - so chip thinning is NOT a magic bullet!}
         #   "...increase your feedrate so that the actual chipload is equal to your (original recommended for 50% WOC) target"
         # https://shapeokoenthusiasts.gitbook.io/shapeoko-cnc-a-to-z/feeds-and-speeds-basics
-        if self.calc_chip_thinning and (self.WOC < 0.5 *  tool.toolDia):
+        if self.calc_chip_thinning and (self.WOC < 0.5 *  tool.Diameter):
             #TODO what about when WOC gets small, then calc_chipload_chip_thin_adjusted is GREATER than WOC!!!!
             #>>>># above is prob INCORRECT, as WOC gets small, the chip thinning diag show shallow cut, but APPROX view is????
             # ...or just one of MANY vars/parts of this calculator where "extreme" situations/settings/values produce "unreliable" results!
             # eg extremely large or small dia tool bits => chipload, load_powerConstant if chipload < 0.02 or > 1.5 
             # Extreme overides of SS or chipload also will casue issues.
             # ....so doco as general advice ....better if have warnigns in danger settings/vars....
-            calc_chipload_chip_thin_adjusted = (tool.toolDia * calc_chipload) / ( 2 *math.sqrt((tool.toolDia * self.WOC) - (self.WOC*self.WOC)))
-            #print(tool.toolDia, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
+            calc_chipload_chip_thin_adjusted = (tool.Diameter * calc_chipload) / ( 2 *math.sqrt((tool.Diameter * self.WOC) - (self.WOC*self.WOC)))
+            #print(tool.Diameter, self.WOC, calc_chipload , ' --> ', calc_chipload_chip_thin_adjusted)
             calc_chipload = calc_chipload_chip_thin_adjusted
 
         if self.chipload_overide:
@@ -346,7 +354,7 @@ class FSCalculation:
         #                   2. chip thinning & min possible chip thickness...
         # C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), calc_chipload)    #self.feedPerTooth)
-        rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
+        rpm = int((1000 * surfaceSpeed) / (math.pi * tool.Diameter))
         calc_rpm = rpm
 
         if self.rpm_overide:
@@ -365,8 +373,8 @@ class FSCalculation:
 
         # Machining Power
         # Horizontal Feed
-        #hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
-        hfeed = int(calc_rpm * calc_chipload * tool.flutes)
+        #hfeed = int(calc_rpm * self.feedPerTooth * tool.Flutes)
+        hfeed = int(calc_rpm * calc_chipload * tool.Flutes)
         # Calculation to Machineries Handbook: Pg 1058
         # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
         # Material Removal Rate: Pg 1049
@@ -378,7 +386,7 @@ class FSCalculation:
         # Vertical Feed
         #vfeed = int(self.feedPerTooth * calc_rpm)
         vfeed = int(calc_chipload * calc_rpm)
-        # Kd = Work material factor (Table 31)
+        # Kd = Work Material factor (Table 31)
         # Ff = Feed factor (Table 33)
         # FM = Torque factor for drill diameter (Table 34)
         # A = Chisel edge factor for torque (Table 32)
@@ -388,9 +396,9 @@ class FSCalculation:
         # drilling power:
         # Kd = next(item for item in materials if item["material"] == self.material).get("Kd")
         # Ff = getInterpolatedValue(load_feedFactor(), self.feedPerTooth)
-        # Fm = getInterpolatedValue(load_diameterFactors(), tool.toolDia)
+        # Fm = getInterpolatedValue(load_diameterFactors(), tool.Diameter)
         # A = 1.085  # fixed value based on standard 118 deg drill. Table 32
-        # W = 0.18 * tool.toolDia  # fixed value based on standard 118 deg drill. Table 32
+        # W = 0.18 * tool.Diameter  # fixed value based on standard 118 deg drill. Table 32
 
         # M = Kd * Ff * Fm * A * W / 40000    # pg 1054
         # Pc = M * calc_rpm / 9550            # pg 1054
@@ -400,6 +408,6 @@ class FSCalculation:
         # Convert to Hp
         Hp = Pm * 1.341
 
-        print(f'{self.material:18} {self.WOC:2.2f} {tool.toolDia:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
+        print(f'{self.material:18} {self.WOC:2.2f} {tool.Diameter:2.2f}mm {orig_chipload:1.4f}=>{calc_chipload_chip_thin_adjusted:1.4f}=>{calc_chipload:1.4f}mm/tooth {rpm:6.0f}=>{calc_rpm:6.0f}rpm {hfeed:5.0f} {vfeed:5.0f}mm/min {Hp*745.6999:5.0f}W')
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp

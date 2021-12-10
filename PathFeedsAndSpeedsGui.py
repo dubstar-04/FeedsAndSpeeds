@@ -163,7 +163,7 @@ class FeedSpeedPanel():
         else:
             currentTool.toolDia = float(self.form.toolDia_LE.text())
             currentTool.flutes = int(self.form.flutes_SB.text())
-        currentTool.material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
+        currentTool.Material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
         #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
         cl = self.calculation.get_chipload(currentTool)
         # FIXME temp cludge to **TRYING TO** ie NOT FIXED YET cope with none value of cl if cl not found!
@@ -225,8 +225,7 @@ class FeedSpeedPanel():
                     tool_sa.toolDia = rowDict["dia"]
                     tool_sa.flutes = rowDict["flutes"]
                     tool_sa.material = rowDict["material"]
-                        return tool_sa
-            
+                    return tool_sa
 
         return None
 
