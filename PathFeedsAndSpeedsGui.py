@@ -195,11 +195,14 @@ class FeedSpeedPanel():
     def load_tool_properties(self):
         tc = self.get_tool_controller()
         if tc:
-            tool = tc.Tool
-            dia = tc.Diameter
-            flutes = tc.Flutes
-            chipload = tc.Chipload
-            material = tc.Material
+            if app_mode_FCaddon:
+                tool = tc.Tool
+            else:
+                tool = tc
+            dia = tool.Diameter
+            flutes = tool.Flutes
+            chipload = tool.Chipload
+            material = tool.Material
             #print("tool props:", tool, dia, flutes, material, chipload)
             self.set_tool_properties(dia, flutes, chipload, material)
         else:
