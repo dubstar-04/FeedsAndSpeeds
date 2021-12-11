@@ -110,9 +110,8 @@ class FeedSpeedPanel():
         self.form.DOC_SP.textChanged.connect(self.calculate)
         self.form.ss_LE.textChanged.connect(self.calculate)
         self.form.rpm_LE.textChanged.connect(self.calculate)
-        if app_mode_FCaddon:
-            self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
-            self.form.update_PB.clicked.connect(self.update_tool_controller)
+        self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
+        self.form.update_PB.clicked.connect(self.update_tool_controller)
         self.form.close_PB.clicked.connect(self.quit)
 
     def setup_ui(self):
@@ -129,10 +128,8 @@ class FeedSpeedPanel():
         self.form.ss_LE.setValidator(self.onlyInt)
         self.form.rpm_LE.setValidator(self.onlyInt)
 
-        #FIXME ...finish testing/coding for tools FC/standalone modes
         self.load_tools()
-        if app_mode_FCaddon:
-            self.load_tool_properties()
+        self.load_tool_properties()
         self.set_tool_material()
         self.set_material()
         
@@ -167,10 +164,10 @@ class FeedSpeedPanel():
         #print(currentTool.toolDia, currentTool.flutes, currentTool.material)
         cl = self.calculation.get_chipload(currentTool)
         # FIXME temp cludge to **TRYING TO** ie NOT FIXED YET cope with none value of cl if cl not found!
-        #print ('chipload: ', cl)
         if cl:
             self.form.FPT_SB.setValue(cl)   #TODO hopefully just need cl value 
         else:
+            print ('TEMP CLUDGE chipload forced to 0.01: ', cl)
             self.form.FPT_SB.setValue(0.01)
         self.calculate
 
@@ -197,20 +194,21 @@ class FeedSpeedPanel():
 
     def load_tool_properties(self):
         tc = self.get_tool_controller()
-
         if tc:
             tool = tc.Tool
-            dia = tool.Diameter
-            flutes = tool.Flutes
-            material = tool.Material
-            chipload = tool.Chipload
+            dia = tc.Diameter
+            flutes = tc.Flutes
+            chipload = tc.Chipload
+            material = tc.Material
+            #print("tool props:", tool, dia, flutes, material, chipload)
             self.set_tool_properties(dia, flutes, chipload, material)
-            print("tool props:", dia, flutes, material, chipload)
+        else:
+            print('FAILED TO load_tool_properties - get_tool_controller()', tc, tc.tool)
 
     def get_tool_controller(self):
+        tcStr = self.form.toolController_CB.currentText()
         if app_mode_FCaddon:
             jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
-            tcStr = self.form.toolController_CB.currentText()
             for job in jobs:
                 for tc in job.Tools.Group:
                     if tc.Label == tcStr:
@@ -219,12 +217,12 @@ class FeedSpeedPanel():
             tools_sa = PathFeedsAndSpeeds.load_tools_standalone_only()
             for rowDict in tools_sa:
                 tool_sa = PathFeedsAndSpeeds.Tool()
-                tool_sa.name = rowDict["name"]
-                if tool_sa.name == tcStr:
-                    print('matched tool names', tool_sa.name)
-                    tool_sa.toolDia = rowDict["dia"]
-                    tool_sa.flutes = rowDict["flutes"]
-                    tool_sa.material = rowDict["material"]
+                tool_sa.Tool = rowDict["name"]
+                if tool_sa.Tool == tcStr:
+                    #print('matched tool names', tool_sa.Tool, '\t', tcStr)
+                    tool_sa.Diameter = rowDict["dia"]
+                    tool_sa.Flutes = rowDict["flutes"]
+                    tool_sa.Material = rowDict["material"]
                     return tool_sa
 
         return None

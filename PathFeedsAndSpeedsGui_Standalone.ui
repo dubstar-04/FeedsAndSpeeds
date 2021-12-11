@@ -56,14 +56,14 @@
          </size>
         </property>
         <property name="text">
-         <string>Tool Controller:</string>
+         <string>Tool Name:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="toolController_CB">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tool Controller&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tool Name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>

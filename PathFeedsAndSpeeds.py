@@ -221,10 +221,12 @@ def load_data(dataFile):
 
 # Updated var names to match those of FreeCAD ToolController.Tool to ease standalone code.
 class Tool:
-    def __init__(self, Diameter=6, Flutes=3, Material='HSS'):
+    def __init__(self, Name = 'Endmill 1', Diameter=6.01, Flutes=3, Material='HSS', Chipload = 0.01):
+        self.Tool = Name
         self.Diameter = Diameter
         self.Flutes = Flutes
         self.Material = Material
+        self.Chipload = Chipload
 
 		#obj = App.getDocument("DSG12H_leadnut_block_vD_005_2021_09_29").getObject("TC__T4001")
 		#obj.PropertiesList
