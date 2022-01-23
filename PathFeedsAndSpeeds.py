@@ -217,11 +217,11 @@ class FSCalculation:
         self.limits = None
 
     def get_surface_speed(self):
-        print("material", self.material)
+        # print("material", self.material)
         if self.material:
             materials = load_materials()
             surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-            print("found ss:", surfaceSpeed)
+            # print("found ss:", surfaceSpeed)
             return surfaceSpeed
 
         return "-"
