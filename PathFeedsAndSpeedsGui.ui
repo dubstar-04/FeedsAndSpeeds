@@ -454,7 +454,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;surface speed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
-         <string>Overide</string>
+         <string>Override</string>
         </property>
         <property name="unit" stdset="0">
          <string notr="true"/>
@@ -473,7 +473,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;spindle speed or rpm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
-         <string>Overide</string>
+         <string>Override</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
