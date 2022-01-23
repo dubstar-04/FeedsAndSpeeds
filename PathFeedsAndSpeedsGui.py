@@ -2,6 +2,7 @@
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
 import FreeCAD, FreeCADGui
+import FreeCAD, FreeCADGui, Path
 import os
 from PySide import QtGui
 import PathFeedsAndSpeeds
@@ -94,6 +95,9 @@ class FeedSpeedPanel():
 
         if tc:
             tool = tc.Tool
+            if isinstance(tool, Path.Tool):
+                FreeCAD.Console.PrintError("Legacy Tools Not Supported")
+                return
             dia = tool.Diameter
             flutes = tool.Flutes
             material = tool.Material
