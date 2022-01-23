@@ -2,6 +2,7 @@
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
 import FreeCAD, FreeCADGui
+import FreeCAD, FreeCADGui, Path
 import os
 from PySide import QtGui
 import PathFeedsAndSpeeds
@@ -26,8 +27,8 @@ class FeedSpeedPanel():
 
         # connect
         self.form.material_CB.currentIndexChanged.connect(self.set_material)
-        self.form.hss_RB.toggled.connect(self.calculate)
-        self.form.cbd_RB.toggled.connect(self.calculate)
+        self.form.hss_RB.toggled.connect(self.set_material)
+        self.form.cbd_RB.toggled.connect(self.set_material)
         self.form.toolDia_LE.textChanged.connect(self.calculate)
         self.form.flutes_SB.valueChanged.connect(self.calculate)
         self.form.FPT_SB.valueChanged.connect(self.calculate)
@@ -74,6 +75,7 @@ class FeedSpeedPanel():
     def set_material(self):
         material = self.form.material_CB.currentText()
         self.calculation.set_material(material)
+        self.set_tool_material()
         ss = self.calculation.get_surface_speed()
         self.form.ss_LE.setText(str(ss))
         self.calculate
@@ -93,6 +95,9 @@ class FeedSpeedPanel():
 
         if tc:
             tool = tc.Tool
+            if isinstance(tool, Path.Tool):
+                FreeCAD.Console.PrintError("Legacy Tools Not Supported")
+                return
             dia = tool.Diameter
             flutes = tool.Flutes
             material = tool.Material
