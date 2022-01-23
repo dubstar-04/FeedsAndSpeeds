@@ -2,24 +2,38 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="64px"
    height="64px"
    id="svg2980"
    sodipodi:version="0.32"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    sodipodi:docname="Path_FeedsAndSpeeds.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   version="1.1">
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title14623">Path_FeedandSpeed</title>
   <defs
      id="defs2982">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient12929">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop12925" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop12927" />
+    </linearGradient>
     <linearGradient
        id="linearGradient3864">
       <stop
@@ -60,6 +74,16 @@
        fx="51.328892"
        fy="31.074146"
        r="19.571428" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient12929"
+       id="linearGradient12931"
+       x1="30"
+       y1="6"
+       x2="30"
+       y2="12"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,2)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -68,19 +92,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.526269"
-     inkscape:cx="3.2299159"
-     inkscape:cy="27.177987"
+     inkscape:zoom="9.5645165"
+     inkscape:cx="29.693085"
+     inkscape:cy="51.806069"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="2560"
+     inkscape:window-width="1641"
      inkscape:window-height="1376"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1"
-     inkscape:snap-global="true">
+     inkscape:window-x="20"
+     inkscape:window-y="20"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="true"
+     inkscape:pagecheckerboard="0"
+     showguides="false">
     <inkscape:grid
        type="xygrid"
        id="grid2991"
@@ -99,32 +125,25 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
         <dc:creator>
           <cc:Agent>
-            <dc:title>[Yorik van Havre]</dc:title>
+            <dc:title>[Daniel Wood]</dc:title>
           </cc:Agent>
         </dc:creator>
-        <dc:title>Arch_CloseHoles</dc:title>
-        <dc:date>2012-07-22</dc:date>
+        <dc:date>2022-01-23</dc:date>
         <dc:relation>http://www.freecadweb.org/wiki/index.php?title=Artwork</dc:relation>
         <dc:publisher>
           <cc:Agent>
             <dc:title>FreeCAD</dc:title>
           </cc:Agent>
         </dc:publisher>
-        <dc:identifier>FreeCAD/src/Mod/Arch/Resources/icons/Arch_CloseHoles.svg</dc:identifier>
         <dc:rights>
           <cc:Agent>
             <dc:title>FreeCAD LGPL2+</dc:title>
           </cc:Agent>
         </dc:rights>
         <cc:license>https://www.gnu.org/copyleft/lesser.html</cc:license>
-        <dc:contributor>
-          <cc:Agent>
-            <dc:title>[agryson] Alexander Gryson</dc:title>
-          </cc:Agent>
-        </dc:contributor>
+        <dc:title>Path_FeedandSpeed</dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -133,46 +152,83 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#000000;fill-opacity:1;stroke:#000200;stroke-width:2.30286694;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#d3d7cf;fill-opacity:1;stroke:#000004;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect829"
-       width="59.697132"
-       height="59.697132"
-       x="2.1514335"
-       y="2.1514347" />
+       width="56"
+       height="59.738914"
+       x="4"
+       y="2.281975"
+       ry="4" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.98425096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect830"
-       width="62"
-       height="4"
-       x="1"
-       y="47" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.98425096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#00ffff;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect830-3"
-       width="62"
-       height="4"
-       x="1"
-       y="30" />
+       width="48"
+       height="11"
+       x="8"
+       y="7"
+       ry="1.717854" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.98425096;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.984251;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect830-6"
        width="62"
        height="4"
-       x="1"
-       y="15" />
+       x="-62"
+       y="40" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.83852547;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect830-6-5"
-       width="4"
-       height="45"
-       x="18.5"
-       y="18" />
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-3"
+       width="11.248433"
+       height="11.248433"
+       x="42.751568"
+       y="24.751568"
+       ry="2.8121083" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.83852547;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect830-6-5-3"
-       width="4"
-       height="45"
-       x="41.5"
-       y="18" />
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-1-4"
+       width="11.248433"
+       height="11.248433"
+       x="10"
+       y="24.751568"
+       ry="2.8121083" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-1-7"
+       width="11.248433"
+       height="11.248433"
+       x="26.375784"
+       y="24.751568"
+       ry="2.8121083" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-1-8"
+       width="11.248433"
+       height="11.248433"
+       x="26.375784"
+       y="44.751568"
+       ry="2.8121083" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-1"
+       width="11.248433"
+       height="11.248433"
+       x="42.751568"
+       y="44.751568"
+       ry="2.8121083" />
+    <rect
+       style="fill:#4d4d4d;fill-opacity:1;stroke:#000004;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4250-9-1-9"
+       width="11.248433"
+       height="11.248433"
+       x="10"
+       y="44.751568"
+       ry="2.8121083" />
+    <rect
+       style="opacity:0.44873;fill:url(#linearGradient12931);fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect12887"
+       width="48"
+       height="11"
+       x="8"
+       y="7"
+       ry="1.717854" />
   </g>
 </svg>
