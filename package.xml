@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<package format="1">
+  <name>FeedsAndSpeeds</name>
+  <description>A FreeCAD Path Addon to help generate basic feeds and speeds for machining.</description>
+  <version>0.1</version>
+  <maintainer email="s.d.wood.82@googlemail.com">Daniel Wood</maintainer>
+  <license file="LICENSE">LGPL-2.1</license>
+  <url type="repository" branch="master">https://github.com/dubstar-04/FeedsAndSpeeds.git</url>
+  <url type="readme">https://github.com/dubstar-04/FeedsAndSpeeds/blob/master/README.md</url>
+
+  <content>
+    <workbench>
+      <classname>FeedsAndSpeeds</classname>
+      <subdirectory>./</subdirectory>
+      <icon>Icons/Path_FeedsAndSpeeds.svg</icon>
+      <freecadmin>0.19.0</freecadmin>
+    </workbench>
+  </content>
+
+</package>
