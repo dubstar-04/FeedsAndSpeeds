@@ -73,14 +73,13 @@ for any damage or personal injury caused by incorrect machining parameters.
   - Simple approach, needs improved algorithm for power limit.
   - Note: not yet implemented in "expert" mode.
 
+[FreeCAD expert mode](images/FC_expert_mode.png?raw=true "Expert Mode running from FreeCAD")
 
-[FreeCAD expert mode](/assets/images/FC_expert_mode.png)
+[FreeCAD guided mode](/images/FC_guided_mode.png)
 
-[FreeCAD guided mode](/assets/images/FC_guided_mode.png)
+[Script mode](images/Scripted_console.png)
 
-[Script mode](/assets/images/Scripted_console.png)
-
-[Required inputs for each calculation & calc order](/assets/images/Calculation_order_complete.png)
+[Required inputs for each calculation & calc order](images/Calculation_order_complete.png)
 
 
 ## Differences between FreeCAD, Standalone & Scripted console modes
