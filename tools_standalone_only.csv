@@ -1,0 +1,11 @@
+Label,Diameter,Flutes,Material,tType
+ToolSa0100_,1,1,HSS,endmill
+ToolSa0100_010,1,1,Carbide,endmill
+ToolSa0200_,2,4,HSS,chamfer
+ToolSa0500_,5,4,HSS,V-carve
+ToolSa0500_001,5,1,HSS,slitting
+ToolSa1000_,10,4,HSS,bull nose
+ToolSa1500_,15,4,HSS,centre drill
+ToolSa1800_,18,2,HSS,drill
+ToolSa2000_,20,4,HSS,endmill
+ToolSa2000_001,20,4,Carbide,endmill

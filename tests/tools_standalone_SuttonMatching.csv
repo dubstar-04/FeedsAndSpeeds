@@ -1,0 +1,10 @@
+name,uid,tType,dia,length,length,flutes,"shape (spiral, straight, up/downcut, anti/clockwise..)",shape,material,coating etc,Stock material,Notes,Order#,Order-Line#,notes
+endmill Sutton Brand 6_60,60,endmill,6,11,54,1,spiral,fishtail,Carbide,Carbide VHM,Al,Sutton Brand,378,1,
+endmill Sutton Brand 6_61,61,endmill,6,8,50,1,spiral,fishtail,Carbide,Carbide VHM,Al,Sutton Brand,378,2,
+endmill Sutton Brand 3_62,62,endmill,3,12,38,2,spiral,fishtail,Carbide,Carbide VHM,Steel,Sutton Brand,378,3,
+endmill Sutton Brand 4_63,63,endmill,4,14,50,2,spiral,fishtail,Carbide,Carbide VHM,Steel,Sutton Brand,378,4,
+endmill Sutton Brand 6_64,64,endmill,6,19,50,2,spiral,fishtail,Carbide,Carbide VHM,Steel,Sutton Brand,378,5,
+endmill Sutton Brand 6_65,65,endmill,6,11,54,1,Helix 30,,Carbide,Carbide VHM,"nonferrous aluminum alloy, brass & bronze, trimming plastics and similar materials",Sutton Brand,399,1,
+endmill Sutton Brand 6_66,66,endmill,6,13,54,1,Helix 30,,Carbide,Carbide VHM,"nonferrous aluminum alloy, brass & bronze, trimming plastics and similar materials",Sutton Brand,399,2,
+endmill Sutton Brand 8_67,67,endmill,8,11,54,1,Helix 30,,Carbide,Carbide VHM,"nonferrous aluminum alloy, brass & bronze, trimming plastics and similar materials",Sutton Brand,399,3,
+endmill Sutton Brand 4_99999,99999,endmill,4,12,54,2,,,HSS,Brt,Al,Sutton Brand,---,---,Made up so can test Sutton HSS settings in Sutton materials csv

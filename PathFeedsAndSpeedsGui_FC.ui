@@ -123,7 +123,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of flutes or cutting edges&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="readOnly">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="minimum">
          <number>1</number>
@@ -171,6 +171,9 @@
           <property name="text">
            <string>HSS</string>
           </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -180,6 +183,9 @@
           </property>
           <property name="text">
            <string>Carbide</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

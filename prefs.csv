@@ -1,0 +1,7 @@
+pref,value,description
+guiModePref,expert,expert or guided Gui mode. change requires a restart. ATM need manually edit prefs.csv
+cncLimits,enabled, enabled or disabled
+cncLimitFeedMax,333,
+cncLimitRpmMin,800,"IMPLEMENTED, but not well tested"
+cncLimitRpmMax,10000,
+cncLimitPower,400,

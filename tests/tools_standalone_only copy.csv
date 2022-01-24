@@ -1,0 +1,61 @@
+Label,Diameter,Flutes,Material,tType
+ToolSa0100_,1,1,HSS,endmill
+ToolSa0100_001,1,1,HSS,ball endmill
+ToolSa0100_002,1,2,HSS,chamfer
+ToolSa0100_003,1,3,HSS,V-carve
+ToolSa0100_004,1,4,HSS,slitting
+ToolSa0100_005,1,5,HSS,bull nose
+ToolSa0100_006,1,1,Carbide,centre drill
+ToolSa0100_007,1,1,Carbide,drill
+ToolSa0100_008,1,2,Carbide,thread mill
+ToolSa0100_009,1,3,Carbide,probe
+ToolSa0100_010,1,4,Carbide,endmill
+ToolSa0100_011,1,5,Carbide,ball endmill
+ToolSa0200_,2,4,HSS,chamfer
+ToolSa0500_,5,4,HSS,V-carve
+ToolSa0500_001,5,1,HSS,slitting
+ToolSa1000_,10,4,HSS,bull nose
+ToolSa1500_,15,4,HSS,centre drill
+ToolSa2500_,25,4,HSS,drill
+ToolSa5000_,50,1,HSS,thread mill
+ToolSa5000_001,50,1,HSS,probe
+ToolSa5000_002,50,2,HSS,endmill
+ToolSa5000_003,50,3,HSS,ball endmill
+ToolSa5000_004,50,4,HSS,chamfer
+ToolSa5000_005,50,5,HSS,V-carve
+ToolSa5000_006,50,1,Carbide,slitting
+ToolSa5000_007,50,1,Carbide,bull nose
+ToolSa5000_008,50,2,Carbide,centre drill
+ToolSa5000_009,50,3,Carbide,drill
+ToolSa5000_010,50,4,Carbide,thread mill
+ToolSa5000_011,50,5,Carbide,probe
+ToolSa0100a_,1,1,HSS,endmill
+ToolSa0100a_001,1,1,HSS,ball endmill
+ToolSa0100a_002,1,2,HSS,endmill
+ToolSa0100a_003,1,3,HSS,endmill
+ToolSa0100a_004,1,4,HSS,endmill
+ToolSa0100a_005,1,5,HSS,endmill
+ToolSa0100a_006,1,1,Carbide,endmill
+ToolSa0100a_007,1,1,Carbide,endmill
+ToolSa0100a_008,1,2,Carbide,endmill
+ToolSa0100a_009,1,3,Carbide,endmill
+ToolSa0100a_010,1,4,Carbide,endmill
+ToolSa0100a_011,1,5,Carbide,endmill
+ToolSa0200q_,2,4,HSS,endmill
+ToolSa0500q_,5,4,HSS,endmill
+ToolSa0500q_001,5,1,HSS,endmill
+ToolSa1000q_,10,4,HSS,bull nose
+ToolSa1500q_,15,4,HSS,centre drill
+ToolSa2500q_,25,4,HSS,drill
+ToolSa5000q_,50,1,HSS,thread mill
+ToolSa5000q_001,50,1,HSS,probe
+ToolSa5000q_002,50,2,HSS,endmill
+ToolSa5000q_003,50,3,HSS,ball endmill
+ToolSa5000q_004,50,4,HSS,chamfer
+ToolSa5000q_005,50,5,HSS,V-carve
+ToolSa5000q_006,50,1,Carbide,slitting
+ToolSa5000q_007,50,1,Carbide,bull nose
+ToolSa5000q_008,50,2,Carbide,centre drill
+ToolSa5000q_009,50,3,Carbide,drill
+ToolSa5000q_010,50,4,Carbide,thread mill
+ToolSa5000q_011,50,5,Carbide,probe

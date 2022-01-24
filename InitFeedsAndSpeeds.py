@@ -28,15 +28,17 @@ import PathFeedsAndSpeedsGui
 import os
 
 __dir__ = os.path.dirname(__file__)
-iconPath = os.path.join( __dir__, 'Icons' )
+iconPath = os.path.join(__dir__, 'Icons')
+
 
 def getIcon(iconName):
-     return os.path.join( iconPath , iconName)
+    return os.path.join(iconPath, iconName)
+
 
 def updateMenu(workbench):
 
     if workbench == 'PathWorkbench':
-    
+
         print('Feeds and Speeds Addon loaded:', workbench)
 
         mw = FreeCADGui.getMainWindow()
@@ -58,7 +60,7 @@ def updateMenu(workbench):
             # Find the dressup menu entry
             dressupMenu = mw.findChild(QtGui.QMenu, "Path Dressup")
 
-            #addonMenu.setTitle("Path Addons")
+            # addonMenu.setTitle("Path Addons")
             pathMenu.insertMenu(dressupMenu.menuAction(), addonMenu)
 
         # create an action for this addon
@@ -70,5 +72,6 @@ def updateMenu(workbench):
 
         # append this addon to addon menu
         addonMenu.addAction(action)
+
 
 FreeCADGui.getMainWindow().workbenchActivated.connect(updateMenu)
