@@ -68,39 +68,24 @@ def calcAttribs():
 fsAddon = PathFeedsAndSpeeds.FSCalculation()
 print("..................")
 
-# Create some tool/endmill settings FOR SUTTON TEST DATA - so material names different!!!!!!!
-fsAddon.tool.Diameter = 5.0
-fsAddon.tool.Flutes = 1
-fsAddon.tool.Material = 'HSS'   # 'HSS';'Carbide';'unknown'
-fsAddon.WOC = fsAddon.tool.Diameter  / 5
-fsAddon.DOC = 1.0
-fsAddon.toolWear = 1.1                      # Tool Wear pg: 1048
-fsAddon.stockMaterial = "N_21_Aluminum & Magnesium  - wrought alloy"
-fsAddon.chipThinningEnabled = False
-fsAddon.limits.cncLimitsState = 'anything except enabled'
+#Create some tool/endmill settings FOR SUTTON TEST DATA - so material names different!!!!!!!
+#fsAddon.tool.Diameter = 5.0
+#fsAddon.tool.Flutes = 1
+#fsAddon.tool.Material = 'HSS'   # 'HSS';'Carbide';'unknown'
+#fsAddon.WOC = fsAddon.tool.Diameter  / 5
+#fsAddon.DOC = 1.0
+#fsAddon.toolWear = 1.1                      # Tool Wear pg: 1048
+#fsAddon.stockMaterial = "N_21_Aluminum & Magnesium  - wrought alloy"
+#fsAddon.chipThinningEnabled = False
+#fsAddon.limits.cncLimitsState = 'anything except enabled'
 
-print('test SUTTON = dif materials!!!')
-fsAddon.printHeader()
-fsAddon.calculate()
+#print('test SUTTON = dif materials!!!')
+#fsAddon.printHeader()
+#fsAddon.calculate()
 
-fsAddon.stockMaterial = "N_22_Aluminum & Magnesium  - wrought alloy"
-fsAddon.calculate()
-exit()
-
-
-
-
-# below = orig material - not Sutton ones!!!!
-
-
-
-
-
-
-
-
-
-
+#fsAddon.stockMaterial = "N_22_Aluminum & Magnesium  - wrought alloy"
+#fsAddon.calculate()
+#exit()
 
 
 

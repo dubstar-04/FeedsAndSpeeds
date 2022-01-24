@@ -38,7 +38,7 @@ for any damage or personal injury caused by incorrect machining parameters.
 * Write calculated outs back to selected ToolController in FreeCAD
 * Drilling vFeed - temporarily removed due to layout changes made to meet forum suggestions
 
-### 2022-01-??????? Version 0.4
+### 2022-01-24 Version 0.4
 * Users can now set Preferences, materials data, Tool definitions (standalone mode only).
     (materials data = Stock Material, hardness, SurfaceSpeed, Chipload, Kp, Kd, for milling & drilling and Hss/Cardbide tools)
 * Material, Tool and preference data in csv files provides a LOT of user ability to tweak or load own data. 
