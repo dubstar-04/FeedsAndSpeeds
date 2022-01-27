@@ -140,7 +140,7 @@ def load_feedFactor():
 
 
 def load_diameterFactors():
-    # Diamater Factors
+    # Diameter Factors
     # Data from Machineries Handbook 28.
     # Table 34
     # mm, Fm
