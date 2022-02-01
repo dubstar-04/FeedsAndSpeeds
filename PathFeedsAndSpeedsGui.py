@@ -17,9 +17,6 @@ class FeedSpeedPanel():
         # Build GUI
         self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
 
-        # Set Defaults
-        self.toolDia = 6
-
         # Init
         self.calculation = PathFeedsAndSpeeds.FSCalculation()
         self.setup_ui()
@@ -42,12 +39,11 @@ class FeedSpeedPanel():
 
     def setup_ui(self):
         # load materials
-        # materials = PathFeedsAndSpeeds.load_materials()
         for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
             self.form.material_CB.addItem(material)
 
         # load widget data
-        self.set_tool_properties(self.toolDia, 2, self.toolDia * 0.01, "HSS")
+        self.set_tool_properties()
 
         # set input validation
         self.onlyInt = QtGui.QIntValidator()
@@ -59,9 +55,11 @@ class FeedSpeedPanel():
         self.set_tool_material()
         self.set_material()
 
-    def set_tool_properties(self, dia, flutes, chipload, material):
+    def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
+        if chipload is None:
+            chipload = dia * 0.01
         self.form.FPT_SB.setValue(chipload)
 
         self.form.WOC_SP.setText(str(round(dia * 0.2, 2)))
@@ -85,7 +83,6 @@ class FeedSpeedPanel():
 
     def load_tools(self):
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
-        # self.form.toolController_CB.addItem('None')
         for job in jobs:
             for idx, tc in enumerate(job.Tools.Group):
                 self.form.toolController_CB.addItem(tc.Label)
@@ -95,10 +92,11 @@ class FeedSpeedPanel():
 
         if tc:
             tool = tc.Tool
-            if isinstance(tool, Path.Tool):
-                FreeCAD.Console.PrintError("Legacy Tools Not Supported")
-                return
             dia = tool.Diameter
+            if isinstance(tool, Path.Tool):
+                FreeCAD.Console.PrintError("Legacy Tools Not Supported: " + tool.Name + "\n")
+                self.set_tool_properties(dia)
+                return
             flutes = tool.Flutes
             material = tool.Material
             chipload = tool.Chipload
