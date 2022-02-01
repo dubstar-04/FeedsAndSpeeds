@@ -39,7 +39,6 @@ class FeedSpeedPanel():
 
     def setup_ui(self):
         # load materials
-        # materials = PathFeedsAndSpeeds.load_materials()
         for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
             self.form.material_CB.addItem(material)
 
@@ -84,7 +83,6 @@ class FeedSpeedPanel():
 
     def load_tools(self):
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
-        # self.form.toolController_CB.addItem('None')
         for job in jobs:
             for idx, tc in enumerate(job.Tools.Group):
                 self.form.toolController_CB.addItem(tc.Label)
