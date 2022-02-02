@@ -1,7 +1,6 @@
 # Feed and Speed Calculator
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
-import FreeCAD, FreeCADGui
 import FreeCAD, FreeCADGui, Path
 import os
 import re
