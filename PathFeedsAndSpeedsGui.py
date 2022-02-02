@@ -63,6 +63,7 @@ class FeedSpeedPanel():
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
+
         if chipload is None:
             chipload = dia * 0.01
         self.form.FPT_SB.setValue(chipload)
