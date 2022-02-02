@@ -32,7 +32,7 @@ def getInterpolatedValue(inputDict, value):
     try:
         return interpolation(value)
     except:
-        print("Interpolated value outside the expected range")
+        # print("Interpolated value outside the expected range")
         return None
 
 
@@ -248,12 +248,13 @@ class FSCalculation:
         # Horizontal Feed
         hfeed = int(calc_rpm * self.feedPerTooth * tool.flutes)
         # Calculation to Machineries Handbook: Pg 1058
-        # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
-        # Material Removal Rate: Pg 1049
-        Q = float((self.WOC * self.DOC * hfeed) / 60000)  # cm^3/s
-        # print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
-        # Power Required at the cutter: Pg 1048
-        Pc = Kp * C * Q * self.toolWear
+        if C is not None:
+            # print("WOC", self.WOC, " DOC", self.DOC, " Feed", feed)
+            # Material Removal Rate: Pg 1049
+            Q = float((self.WOC * self.DOC * hfeed) / 60000)  # cm^3/s
+            # print("Kp", Kp, " C", C,  " Q", round(Q * 60, 2), " W", self.toolWear, " E", E)
+            # Power Required at the cutter: Pg 1048
+            Pc = Kp * C * Q * self.toolWear
 
         # Vertical Feed
         vfeed = int(self.feedPerTooth * calc_rpm)
@@ -274,9 +275,12 @@ class FSCalculation:
         # M = Kd * Ff * Fm * A * W / 40000    # pg 1054
         # Pc = M * calc_rpm / 9550            # pg 1054
 
-        # Power Required at the motor
-        Pm = Pc / E
-        # Convert to Hp
-        Hp = Pm * 1.341
+        Hp = None
+        if C is not None:
+            # Power Required at the motor
+            Pm = Pc / E
+            # Convert to Hp
+            Hp = Pm * 1.341
+
         # print("power", Pc, Pm, Hp)
         return calc_rpm, hfeed, vfeed, Hp

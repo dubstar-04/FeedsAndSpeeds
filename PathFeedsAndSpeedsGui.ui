@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>643</height>
+    <height>681</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -332,7 +332,7 @@
          <number>3</number>
         </property>
         <property name="minimum">
-         <double>0.020000000000000</double>
+         <double>0.001000000000000</double>
         </property>
         <property name="maximum">
          <double>1.500000000000000</double>
