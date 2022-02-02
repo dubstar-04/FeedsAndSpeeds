@@ -47,8 +47,12 @@ class FeedSpeedPanel():
 
         # set input validation
         self.onlyInt = QtGui.QIntValidator()
+        self.onlyInt.setBottom(1)
         self.form.ss_LE.setValidator(self.onlyInt)
         self.form.rpm_LE.setValidator(self.onlyInt)
+
+        self.form.WOC_SP.setProperty("minimum", 0.0)
+        self.form.DOC_SP.setProperty("minimum", 0.0)
 
         self.load_tools()
         self.load_tool_properties()
@@ -63,6 +67,7 @@ class FeedSpeedPanel():
         self.form.FPT_SB.setValue(chipload)
 
         self.form.WOC_SP.setText(str(round(dia * 0.2, 2)))
+        self.form.WOC_SP.setProperty("maximum", float(dia))
         self.form.DOC_SP.setText(str(dia))
 
         if material == "HSS":
