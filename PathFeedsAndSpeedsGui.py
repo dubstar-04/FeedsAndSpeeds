@@ -4,6 +4,7 @@
 import FreeCAD, FreeCADGui
 import FreeCAD, FreeCADGui, Path
 import os
+import re
 from PySide import QtGui
 import PathFeedsAndSpeeds
 
@@ -47,8 +48,12 @@ class FeedSpeedPanel():
 
         # set input validation
         self.onlyInt = QtGui.QIntValidator()
+        self.onlyInt.setBottom(1)
         self.form.ss_LE.setValidator(self.onlyInt)
         self.form.rpm_LE.setValidator(self.onlyInt)
+
+        self.form.WOC_SP.setProperty("minimum", 0.0)
+        self.form.DOC_SP.setProperty("minimum", 0.0)
 
         self.load_tools()
         self.load_tool_properties()
@@ -58,11 +63,13 @@ class FeedSpeedPanel():
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
+
         if chipload is None:
             chipload = dia * 0.01
         self.form.FPT_SB.setValue(chipload)
 
         self.form.WOC_SP.setText(str(round(dia * 0.2, 2)))
+        self.form.WOC_SP.setProperty("maximum", float(dia))
         self.form.DOC_SP.setText(str(dia))
 
         if material == "HSS":
@@ -117,7 +124,7 @@ class FeedSpeedPanel():
         tc = self.get_tool_controller()
 
         if tc:
-            rpm = self.form.rpm_result.text()
+            rpm = re.sub("[^0-9]", "", self.form.rpm_result.text())
             hfeed = self.form.hfeed_result.text()
             vfeed = self.form.vfeed_result.text()
             # TODO: Add a confirmation dialog
@@ -125,9 +132,25 @@ class FeedSpeedPanel():
             tc.VertFeed = vfeed
             tc.SpindleSpeed = float(rpm)
 
+    def validate_input(self):
+
+        if self.form.WOC_SP.text() == "":
+            return False
+        
+        if self.form.DOC_SP.text() == "":
+            return False
+
+        if self.form.ss_LE.text() == "":
+            return False
+
+        return True
+
     def calculate(self):
 
         if self.calculation.material is None:
+            return
+
+        if not self.validate_input():
             return
 
         tool = PathFeedsAndSpeeds.Tool()
