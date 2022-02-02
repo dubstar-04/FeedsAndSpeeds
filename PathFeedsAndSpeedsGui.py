@@ -130,9 +130,25 @@ class FeedSpeedPanel():
             tc.VertFeed = vfeed
             tc.SpindleSpeed = float(rpm)
 
+    def validate_input(self):
+
+        if self.form.WOC_SP.text() == "":
+            return False
+        
+        if self.form.DOC_SP.text() == "":
+            return False
+
+        if self.form.ss_LE.text() == "":
+            return False
+
+        return True
+
     def calculate(self):
 
         if self.calculation.material is None:
+            return
+
+        if not self.validate_input():
             return
 
         tool = PathFeedsAndSpeeds.Tool()
