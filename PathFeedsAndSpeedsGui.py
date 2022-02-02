@@ -174,13 +174,15 @@ class FeedSpeedPanel():
             return
 
         rpm, hfeed, vfeed, Hp = self.calculation.calculate(tool, surfaceSpeed)
-        watts = Hp * 745.69
 
         self.form.rpm_result.setText(str(rpm))
         self.form.rpm_result.setText(str(rpm) + " rpm")
         self.form.hfeed_result.setText(str(hfeed) + " mm/min")
         self.form.vfeed_result.setText(str(vfeed) + " mm/min")
-        self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
+        self.form.hp_result.setText("-")
+        if Hp is not None:
+            watts = Hp * 745.69
+            self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
         self.form.exec_()
