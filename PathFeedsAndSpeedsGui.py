@@ -45,6 +45,7 @@ class FeedSpeedPanel():
         self.form.close_PB.clicked.connect(self.quit)
 
     def setup_ui(self):
+        """setup the user interface"""
         # load materials
         for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
             self.form.material_CB.addItem(material)
@@ -77,6 +78,7 @@ class FeedSpeedPanel():
                 QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path paramaters")
 
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
+        """set the tool properties for the selected tool"""
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
 
@@ -96,6 +98,7 @@ class FeedSpeedPanel():
     def set_material(self):
         material = self.form.material_CB.currentText()
         self.calculation.set_material(material)
+        """set the material properties"""
         self.set_tool_material()
         ss = self.calculation.get_surface_speed()
         self.form.ss_LE.setText(str(ss))
@@ -103,14 +106,17 @@ class FeedSpeedPanel():
 
     def set_tool_material(self):
         self.calculation.ss_by_material = "ss_hss" if self.form.hss_RB.isChecked() else "ss_cbd"
+        """set the tool material"""
 
     def load_tools(self):
+        """load the tools in the current job"""
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         for job in jobs:
             for idx, tc in enumerate(job.Tools.Group):
                 self.form.toolController_CB.addItem(tc.Label)
 
     def load_tool_properties(self):
+        """load the properties from the selected tool"""
         tc = self.get_tool_controller()
 
         if tc:
@@ -127,6 +133,7 @@ class FeedSpeedPanel():
             print("tool props:", dia, flutes, material, chipload)
 
     def get_tool_controller(self):
+        """get the tool controller"""
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         tcStr = self.form.toolController_CB.currentText()
         for job in jobs:
@@ -137,6 +144,7 @@ class FeedSpeedPanel():
         return None
 
     def update_tool_controller(self):
+        """write the calculated parameters to the selected tool controller"""
         tc = self.get_tool_controller()
 
         if tc:
@@ -150,6 +158,7 @@ class FeedSpeedPanel():
 
     def validate_input(self):
 
+        """ validate the user input"""
         if self.form.WOC_SP.text() == "":
             return False
         
@@ -163,6 +172,7 @@ class FeedSpeedPanel():
 
     def calculate(self):
 
+        """perform the feeds and speeds calculation"""
         if self.calculation.material is None:
             return
 
@@ -219,6 +229,7 @@ class FeedSpeedPanel():
 
 
 def Show():
+    """ show the speeds and feeds dialog"""
     if not FreeCAD.ActiveDocument:
         QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "No Active Document")
         return
