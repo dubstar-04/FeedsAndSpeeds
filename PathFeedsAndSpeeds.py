@@ -36,39 +36,6 @@ def getInterpolatedValue(inputDict, value):
         return None
 
 
-def load_materials():
-    # Data from Machineries Handbook 28.
-    # Kp: Tables 1a, 1b
-    # Brinell Hardness: http://www.matweb.com
-
-    # ss_hss = surface speed (m/min) for milling with high speed steel tools (hss)
-    # ss_cbd = surface speed (m/min) for milling with carbide tools
-    # ss_drill_hss = surface speed (m/min) for drilling with high speed steel tools (hss)
-    # ss_drill_cbd = surface speed (m/min) for drilling with carbide tools
-    # Kd = workMaterialFactor from Table 31
-    # ref: 1 ft/min = 0.3048 m/min
-
-    materials = [
-        {"material": "Softwood",                 "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 3000},  # noqa: E241
-        {"material": "Hardwood",                 "ss_hss": 145,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 4000},  # noqa: E241
-        {"material": "Soft Plastics",            "ss_hss": 225,  "ss_cbd": 255,   "ss_drill_hss": 185,   "ss_drill_cbd": 205,    "kp": 0.5,      "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Hard Plastics",            "ss_hss": 225,  "ss_cbd": 275,   "ss_drill_hss": 115,   "ss_drill_cbd": 400,    "kp": 0.75,     "brinell": 0,     "Kd": 2000},  # noqa: E241
-        {"material": "Aluminium (6061)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 95,    "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (7075)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 125,   "ss_drill_cbd": 310,    "kp": 0.90,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Aluminium (Cast)",         "ss_hss": 175,  "ss_cbd": 395,   "ss_drill_hss": 135,   "ss_drill_cbd": 310,    "kp": 0.68,     "brinell": 150,   "Kd": 7000},  # noqa: E241
-        {"material": "Brass (Hard)",             "ss_hss": 200,  "ss_cbd": 395,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 2.27,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Medium)",           "ss_hss": 175,  "ss_cbd": 350,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 1.36,     "brinell": 120,   "Kd": 14000},  # noqa: E241
-        {"material": "Brass (Soft)",             "ss_hss": 125,  "ss_cbd": 300,   "ss_drill_hss": 115,   "ss_drill_cbd": 350,    "kp": 0.68,     "brinell": 120,   "Kd": 7000},  # noqa: E241
-        {"material": "Carbon Steel",             "ss_hss": 35,   "ss_cbd": 120,   "ss_drill_hss": 25,    "ss_drill_cbd": 90,     "kp": 1.88,     "brinell": 130,   "Kd": 24000},  # noqa: E241
-        {"material": "Tool Steel",               "ss_hss": 12,   "ss_cbd": 45,    "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 1.88,     "brinell": 400,   "Kd": 340000},  # noqa: E241
-        {"material": "Stainless (303)",          "ss_hss": 25,   "ss_cbd": 85,    "ss_drill_hss": 20,    "ss_drill_cbd": 65,     "kp": 2.07,     "brinell": 200,   "Kd": 200000},  # noqa: E241
-        {"material": "Stainless (304)",          "ss_hss": 10,   "ss_cbd": 37.5,  "ss_drill_hss": 10,    "ss_drill_cbd": 30,     "kp": 2.07,     "brinell": 125,   "Kd": 22000},  # noqa: E241
-        {"material": "Stainless (316)",          "ss_hss": 7.5,  "ss_cbd": 25,    "ss_drill_hss": 5,     "ss_drill_cbd": 20,     "kp": 2.07,     "brinell": 80,    "Kd": 24000},  # noqa: E241
-    ]
-
-    return materials
-
-
 def load_powerConstant():
     powerConstant = {
         # Constant Power
@@ -191,40 +158,15 @@ class Tool:
         self.toolDia = toolDia
         self.flutes = flutes
 
-
-class Cnc_limits:
-    """ Define limits of your machines feed rate, rp, and power
-        Defaults are low to help test over rides & also are for my low end home made CNC"""
-
-    def __init__(self, feedMax=1000, rpmMin=1000, rpmMax=12000, power=500):
-
-        self.cncFeedMax = feedMax   # mm/min
-        self.cncRpmMin = rpmMin
-        self.cncRpmMax = rpmMax
-        self.cncPower = power       # in watts
-
-
 class FSCalculation:
     def __init__(self):
 
         self.material = None
         self.rpm_overide = None
-        self.ss_by_material = None
         self.toolWear = None
         self.feedPerTooth = None
         self.WOC = None
         self.DOC = None
-        self.limits = None
-
-    def get_surface_speed(self):
-        # print("material", self.material)
-        if self.material:
-            materials = load_materials()
-            surfaceSpeed = next(item for item in materials if item["material"] == self.material).get(self.ss_by_material)
-            # print("found ss:", surfaceSpeed)
-            return surfaceSpeed
-
-        return "-"
 
     def set_material(self, material):
         self.material = material
