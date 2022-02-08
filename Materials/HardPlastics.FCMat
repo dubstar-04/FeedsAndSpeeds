@@ -1,0 +1,13 @@
+; card_file_name
+; (c) 2015 Your Name (CC-BY 3.0)
+; information about the content of such cards can be found on the wiki:
+; https://www.freecadweb.org/wiki/Material
+
+[FCMat]
+Name = HardPlastics
+Description = Path Material HardPlastics
+Father = Polymer
+SurfaceSpeed_HSS = 225
+SurfaceSpeed_Carbide = 275
+Kp = 0.75
+Kd = 2000

@@ -1,0 +1,13 @@
+; card_file_name
+; (c) 2015 Your Name (CC-BY 3.0)
+; information about the content of such cards can be found on the wiki:
+; https://www.freecadweb.org/wiki/Material
+
+[FCMat]
+Name = CarbonSteel
+Description = Path Material CarbonSteel
+Father = Metal
+SurfaceSpeed_HSS = 35
+SurfaceSpeed_Carbide = 120
+Kp = 1.88
+Kd = 24000
