@@ -43,6 +43,7 @@ class FeedSpeedPanel():
         self.form.toolController_CB.currentIndexChanged.connect(self.load_tool_properties)
         self.form.update_PB.clicked.connect(self.update_tool_controller)
         self.form.close_PB.clicked.connect(self.quit)
+        self.form.material_editor_PB.clicked.connect(self.show_material_editor)
 
     def setup_ui(self):
         """setup the user interface"""
