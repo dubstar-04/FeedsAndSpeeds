@@ -24,8 +24,12 @@ class FeedSpeedPanel():
         # Build GUI
         self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
 
+        self.materials = [] # materials loaded from FreeCAD Materials
+        self.material = {}  # selected material
+
         # Init
         self.calculation = PathFeedsAndSpeeds.FSCalculation()
+        self.load_materials()
         self.setup_ui()
         self.calculate()
 
@@ -48,7 +52,7 @@ class FeedSpeedPanel():
     def setup_ui(self):
         """setup the user interface"""
         # load materials
-        for material in (d['material'] for d in PathFeedsAndSpeeds.load_materials()):
+        for material in (d['Name'] for d in self.materials):
             self.form.material_CB.addItem(material)
 
         # load widget data
@@ -96,19 +100,36 @@ class FeedSpeedPanel():
             self.form.hss_RB.setChecked(True)
         elif material == "Carbide":
             self.form.cbd_RB.setChecked(True)
+    
+    def is_path_material(self, material_card):
+        """check the material contains the path properties"""
+        #TODO: Add additional props
+        if 'SurfaceSpeed_HSS' in material_card:
+            return True
+        
+        return False
+
+    def load_materials(self):
+        """load all materials that contain the required properties"""
+        for file in os.listdir(material_dir):
+            if file.endswith(".FCMat"):
+                material_card = read(os.path.join(material_dir, file))
+                if self.is_path_material(material_card):
+                    self.materials.append(material_card)
 
     def set_material(self):
-        material = self.form.material_CB.currentText()
-        self.calculation.set_material(material)
         """set the material properties"""
+        material_name = self.form.material_CB.currentText()
+        self.material = next(item for item in self.materials if item["Name"] == material_name)
+        self.calculation.set_material(self.material)
         self.set_tool_material()
-        ss = self.calculation.get_surface_speed()
+        ss = self.material.get("SurfaceSpeed_" + self.tool_material)
         self.form.ss_LE.setText(str(ss))
         self.calculate
 
     def set_tool_material(self):
-        self.calculation.ss_by_material = "ss_hss" if self.form.hss_RB.isChecked() else "ss_cbd"
         """set the tool material"""
+        self.tool_material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
 
     def load_tools(self):
         """load the tools in the current job"""
@@ -159,7 +180,6 @@ class FeedSpeedPanel():
             tc.SpindleSpeed = float(rpm)
 
     def validate_input(self):
-
         """ validate the user input"""
         if self.form.WOC_SP.text() == "":
             return False
@@ -173,7 +193,6 @@ class FeedSpeedPanel():
         return True
 
     def calculate(self):
-
         """perform the feeds and speeds calculation"""
         if self.calculation.material is None:
             return
