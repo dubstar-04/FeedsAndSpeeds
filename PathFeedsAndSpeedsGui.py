@@ -52,6 +52,7 @@ class FeedSpeedPanel():
 
         # load widget data
         self.set_tool_properties()
+        self.form.material_editor_PB.setIcon(QtGui.QIcon(os.path.join(iconPath, "Material.svg")))
 
         # set input validation
         self.onlyInt = QtGui.QIntValidator()
