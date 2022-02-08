@@ -1,10 +1,15 @@
 # Feed and Speed Calculator
 # Provides a basic feeds and speeds calculator for use with FreeCAD Path
 
-import FreeCAD, FreeCADGui, Path
 import os
 import re
+
 from PySide import QtGui
+
+import FreeCAD, FreeCADGui, Path
+from importFCMat import read
+import MaterialEditor
+
 import PathFeedsAndSpeeds
 
 dir = os.path.dirname(__file__)
