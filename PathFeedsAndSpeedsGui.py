@@ -66,6 +66,16 @@ class FeedSpeedPanel():
         self.set_tool_material()
         self.set_material()
 
+    def show_material_editor(self):
+        """load the FreeCAD material editor"""
+        new_material = MaterialEditor.editMaterial(material=self.material)
+
+        if new_material:
+            if self.is_path_material(new_material):
+                self.material = new_material
+            else:
+                QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path paramaters")
+
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
