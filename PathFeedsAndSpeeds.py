@@ -173,8 +173,8 @@ class FSCalculation:
 
     def calculate(self, tool, surfaceSpeed):
 
-        materials = load_materials()
-        Kp = next(item for item in materials if item["material"] == self.material).get("kp")
+        # materials = load_materials()
+        Kp = float(self.material.get("Kp"))
         # C = Power Constant
         C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
