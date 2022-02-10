@@ -17,7 +17,6 @@ ui_name = "PathFeedsAndSpeedsGui.ui"
 path_to_ui = os.path.join(dir, ui_name)
 material_dir = os.path.join(dir, 'Materials')
 iconPath = os.path.join(dir, 'Icons')
-
 prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Material/Resources")
 
 class FeedSpeedPanel():
