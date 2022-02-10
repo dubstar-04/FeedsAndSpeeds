@@ -53,11 +53,8 @@ class FeedSpeedPanel():
 
     def setup_ui(self):
         """setup the user interface"""
-        # load materials
-        for material in (d['Name'] for d in self.materials):
-            self.form.material_CB.addItem(material)
-
         # load widget data
+        self.load_material_combobox()
         self.set_tool_properties()
         self.form.material_editor_PB.setIcon(QtGui.QIcon(os.path.join(iconPath, "Material.svg")))
 
@@ -74,6 +71,20 @@ class FeedSpeedPanel():
         self.load_tool_properties()
         self.set_tool_material()
         self.set_material()
+    
+    def load_materials(self):
+        """load all materials that contain the required properties"""
+        for file in os.listdir(material_dir):
+            if file.endswith(".FCMat"):
+                material_card = read(os.path.join(material_dir, file))
+                if self.is_path_material(material_card):
+                    self.materials.append(material_card)
+
+    def load_material_combobox(self):
+        """display materials on the form"""
+        self.form.material_CB.clear()
+        for material in (d['Name'] for d in self.materials):
+            self.form.material_CB.addItem(material)
 
     def show_material_editor(self):
         """load the FreeCAD material editor"""
@@ -81,7 +92,10 @@ class FeedSpeedPanel():
 
         if new_material:
             if self.is_path_material(new_material):
-                self.material = new_material
+                # clear all materials and load just the new material
+                self.materials = []
+                self.materials.append(new_material)
+                self.load_material_combobox()
             else:
                 QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path paramaters")
 
@@ -111,24 +125,18 @@ class FeedSpeedPanel():
         
         return False
 
-    def load_materials(self):
-        """load all materials that contain the required properties"""
-        for file in os.listdir(material_dir):
-            if file.endswith(".FCMat"):
-                material_card = read(os.path.join(material_dir, file))
-                if self.is_path_material(material_card):
-                    self.materials.append(material_card)
-
     def set_material(self):
         """set the material properties"""
-        material_name = self.form.material_CB.currentText()
-        self.material = next(item for item in self.materials if item["Name"] == material_name)
+        self.material = self.materials[self.form.material_CB.currentIndex()]
         self.calculation.set_material(self.material)
+        self.set_surface_speed()
+        self.calculate()
+
+    def set_surface_speed(self):
         """set the surface speed for the selected material and tool"""
         ss = self.material.get("SurfaceSpeed_" + self.tool_material)
         self.form.ss_LE.setText(str(ss))
-        self.calculate
-
+        
     def set_tool_material(self):
         """set the tool material"""
         self.tool_material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
@@ -136,7 +144,6 @@ class FeedSpeedPanel():
         self.calculate()
 
     def load_tools(self):
-        """load the tools in the current job"""
         """load the tools for all jobs in the current document"""
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         for job in jobs:
