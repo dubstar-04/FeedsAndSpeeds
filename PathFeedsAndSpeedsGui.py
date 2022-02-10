@@ -282,5 +282,7 @@ def Show():
         QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "No Path Job in Current Document")
         return
 
+    # create a FeedSpeedPanel form object
     panel = FeedSpeedPanel()
+    # Show the form
     panel.show()
