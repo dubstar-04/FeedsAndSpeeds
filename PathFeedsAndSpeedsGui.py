@@ -125,6 +125,7 @@ class FeedSpeedPanel():
         self.material = next(item for item in self.materials if item["Name"] == material_name)
         self.calculation.set_material(self.material)
         self.set_tool_material()
+        """set the surface speed for the selected material and tool"""
         ss = self.material.get("SurfaceSpeed_" + self.tool_material)
         self.form.ss_LE.setText(str(ss))
         self.calculate
@@ -135,6 +136,7 @@ class FeedSpeedPanel():
 
     def load_tools(self):
         """load the tools in the current job"""
+        """load the tools for all jobs in the current document"""
         jobs = FreeCAD.ActiveDocument.findObjects("Path::FeaturePython", "Job.*")
         for job in jobs:
             for idx, tc in enumerate(job.Tools.Group):
@@ -235,6 +237,7 @@ class FeedSpeedPanel():
             self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
+        """show the form"""
         # get the current custom materials directory
         self.customMaterialDir = prefs.GetString("CustomMaterialsDir", "")
         # set the custom materials directory to the supplied materials directory
@@ -243,18 +246,22 @@ class FeedSpeedPanel():
         self.form.exec_()
 
     def reject(self):
+        """handle reject calls"""
         FreeCAD.Console.PrintMessage("Reject Signal")
         self.quit()
 
     def accept(self):
+        """handle accept calls"""
         self.quit()
 
     def quit(self):
+        """handle quit calls, close the form"""
         # restore the custom materials directory
         prefs.SetString("CustomMaterialsDir", self.customMaterialDir)
         self.form.close()
 
     def reset(self):
+        """handle reset calls"""
         pass
 
 
