@@ -6,7 +6,9 @@ import re
 
 from PySide import QtGui
 
-import FreeCAD, FreeCADGui, Path
+import FreeCAD
+import FreeCADGui
+import Path
 from importFCMat import read
 import MaterialEditor
 
