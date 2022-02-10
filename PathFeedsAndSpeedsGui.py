@@ -37,8 +37,8 @@ class FeedSpeedPanel():
 
         # connect
         self.form.material_CB.currentIndexChanged.connect(self.set_material)
-        self.form.hss_RB.toggled.connect(self.set_material)
-        self.form.cbd_RB.toggled.connect(self.set_material)
+        self.form.hss_RB.toggled.connect(self.set_tool_material)
+        self.form.cbd_RB.toggled.connect(self.set_tool_material)
         self.form.toolDia_LE.textChanged.connect(self.calculate)
         self.form.flutes_SB.valueChanged.connect(self.calculate)
         self.form.FPT_SB.valueChanged.connect(self.calculate)
@@ -124,7 +124,6 @@ class FeedSpeedPanel():
         material_name = self.form.material_CB.currentText()
         self.material = next(item for item in self.materials if item["Name"] == material_name)
         self.calculation.set_material(self.material)
-        self.set_tool_material()
         """set the surface speed for the selected material and tool"""
         ss = self.material.get("SurfaceSpeed_" + self.tool_material)
         self.form.ss_LE.setText(str(ss))
@@ -133,6 +132,8 @@ class FeedSpeedPanel():
     def set_tool_material(self):
         """set the tool material"""
         self.tool_material = "HSS" if self.form.hss_RB.isChecked() else "Carbide"
+        self.set_surface_speed()
+        self.calculate()
 
     def load_tools(self):
         """load the tools in the current job"""
@@ -220,7 +221,6 @@ class FeedSpeedPanel():
         self.calculation.WOC = FreeCAD.Units.Quantity(self.form.WOC_SP.text())
         self.calculation.DOC = FreeCAD.Units.Quantity(self.form.DOC_SP.text())
         self.calculation.toolWear = 1.1  # Tool Wear pg: 1048
-        self.set_tool_material()
 
         if not self.calculation.feedPerTooth:
             return
