@@ -18,12 +18,14 @@ path_to_ui = os.path.join(dir, ui_name)
 material_dir = os.path.join(dir, 'Materials')
 iconPath = os.path.join(dir, 'Icons')
 
+prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Material/Resources")
 
 class FeedSpeedPanel():
     def __init__(self):
         # Build GUI
         self.form = FreeCADGui.PySideUic.loadUi(path_to_ui)
 
+        self.customMaterialDir = "" # store the original custom materials directory
         self.materials = [] # materials loaded from FreeCAD Materials
         self.material = {}  # selected material
 
@@ -233,6 +235,11 @@ class FeedSpeedPanel():
             self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
 
     def show(self):
+        # get the current custom materials directory
+        self.customMaterialDir = prefs.GetString("CustomMaterialsDir", "")
+        # set the custom materials directory to the supplied materials directory
+        prefs.SetString("CustomMaterialsDir", material_dir)
+        # show the form using the bultin exec_() function
         self.form.exec_()
 
     def reject(self):
@@ -243,6 +250,8 @@ class FeedSpeedPanel():
         self.quit()
 
     def quit(self):
+        # restore the custom materials directory
+        prefs.SetString("CustomMaterialsDir", self.customMaterialDir)
         self.form.close()
 
     def reset(self):
