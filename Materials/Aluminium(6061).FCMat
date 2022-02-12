@@ -4,7 +4,7 @@
 ; https://www.freecadweb.org/wiki/Material
 
 [FCMat]
-Name = Aluminium(6061)
+Name = Aluminium (6061)
 Description = Path Material Aluminium(6061)
 Father = Metal
 SurfaceSpeed_HSS = 175

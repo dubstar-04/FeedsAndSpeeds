@@ -4,7 +4,7 @@
 ; https://www.freecadweb.org/wiki/Material
 
 [FCMat]
-Name = Aluminium(Cast)
+Name = Aluminium (Cast)
 Description = Path Material Aluminium(Cast)
 Father = Metal
 SurfaceSpeed_HSS = 175

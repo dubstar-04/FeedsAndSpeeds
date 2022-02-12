@@ -4,7 +4,7 @@
 ; https://www.freecadweb.org/wiki/Material
 
 [FCMat]
-Name = Brass(Hard)
+Name = Brass (Hard)
 Description = Path Material Brass(Hard)
 Father = Metal
 SurfaceSpeed_HSS = 200

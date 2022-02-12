@@ -4,7 +4,7 @@
 ; https://www.freecadweb.org/wiki/Material
 
 [FCMat]
-Name = Aluminium(7075)
+Name = Aluminium (7075)
 Description = Path Material Aluminium(7075)
 Father = Metal
 SurfaceSpeed_HSS = 175

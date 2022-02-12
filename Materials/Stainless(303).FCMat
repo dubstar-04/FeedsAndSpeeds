@@ -4,7 +4,7 @@
 ; https://www.freecadweb.org/wiki/Material
 
 [FCMat]
-Name = Stainless(303)
+Name = Stainless (303)
 Description = Path Material Stainless(303)
 Father = Metal
 SurfaceSpeed_HSS = 25
