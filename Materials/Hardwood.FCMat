@@ -1,0 +1,13 @@
+; Hardwood
+; (c) 2022 Daniel Wood (CC-BY 3.0)
+; information about the content of such cards can be found on the wiki:
+; https://www.freecadweb.org/wiki/Material
+
+[FCMat]
+Name = Hardwood
+Description = Path Material Hardwood
+Father = Aggregate
+SurfaceSpeed_HSS = 145
+SurfaceSpeed_Carbide = 275
+Kp = 0.75
+Kd = 4000

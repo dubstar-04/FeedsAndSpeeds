@@ -1,0 +1,13 @@
+; Brass(Hard)
+; (c) 2022 Daniel Wood (CC-BY 3.0)
+; information about the content of such cards can be found on the wiki:
+; https://www.freecadweb.org/wiki/Material
+
+[FCMat]
+Name = Brass (Hard)
+Description = Path Material Brass(Hard)
+Father = Metal
+SurfaceSpeed_HSS = 200
+SurfaceSpeed_Carbide = 395
+Kp = 2.27
+Kd = 14000
