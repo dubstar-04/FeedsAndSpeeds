@@ -80,6 +80,8 @@ class FeedSpeedPanel():
                 material_card = read(os.path.join(material_dir, file))
                 if self.is_path_material(material_card):
                     self.materials.append(material_card)
+        # sort the material list alphabetically
+        self.materials = sorted(self.materials, key=lambda d: d['Name']) 
 
     def load_material_combobox(self):
         """display materials on the form"""
