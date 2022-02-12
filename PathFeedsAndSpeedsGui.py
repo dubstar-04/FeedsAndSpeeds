@@ -106,8 +106,8 @@ class FeedSpeedPanel():
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
 
-            chipload = dia * 0.01
         if chipload is None or chipload == 0:
+            chipload = dia * 0.005
         self.form.FPT_SB.setValue(chipload)
 
         self.form.WOC_SP.setText(str(round(dia * 0.2, 2)))
