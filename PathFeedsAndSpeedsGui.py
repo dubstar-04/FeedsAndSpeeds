@@ -130,7 +130,7 @@ class FeedSpeedPanel():
 
     def set_material(self):
         """set the material properties"""
-        if len(self.material) and self.form.material_CB.count():
+        if len(self.materials) and self.form.material_CB.count():
             self.material = self.materials[self.form.material_CB.currentIndex()]
             self.calculation.set_material(self.material)
             self.set_surface_speed()
