@@ -40,7 +40,6 @@ class FeedSpeedPanel():
         self.form.material_CB.currentIndexChanged.connect(self.set_material)
         self.form.hss_RB.toggled.connect(self.set_tool_material)
         self.form.cbd_RB.toggled.connect(self.set_tool_material)
-        self.form.toolDia_LE.textChanged.connect(self.calculate)
         self.form.flutes_SB.valueChanged.connect(self.calculate)
         self.form.FPT_SB.valueChanged.connect(self.calculate)
         self.form.WOC_SP.textChanged.connect(self.calculate)
