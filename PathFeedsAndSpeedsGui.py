@@ -99,7 +99,7 @@ class FeedSpeedPanel():
                 self.materials.append(new_material)
                 self.load_material_combobox()
             else:
-                QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path paramaters")
+                QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path parameters")
 
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
         """set the tool properties for the selected tool"""
@@ -252,7 +252,7 @@ class FeedSpeedPanel():
         self.customMaterialDir = prefs.GetString("CustomMaterialsDir", "")
         # set the custom materials directory to the supplied materials directory
         prefs.SetString("CustomMaterialsDir", material_dir)
-        # show the form using the bultin exec_() function
+        # show the form using the builtin exec_() function
         self.form.exec_()
 
     def reject(self):
