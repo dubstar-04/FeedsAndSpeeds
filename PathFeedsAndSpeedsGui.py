@@ -186,7 +186,7 @@ class FeedSpeedPanel():
         tc = self.get_tool_controller()
 
         if tc:
-            rpm = re.sub("[^0-9]", "", self.form.rpm_result.text())
+            rpm = re.sub("[^0-9.]", "", self.form.rpm_result.text())
             hfeed = self.form.hfeed_result.text()
             vfeed = self.form.vfeed_result.text()
             # TODO: Add a confirmation dialog
