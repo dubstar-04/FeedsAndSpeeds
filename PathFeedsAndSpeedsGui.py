@@ -160,7 +160,8 @@ class FeedSpeedPanel():
         if tc:
             tool = tc.Tool
             dia = tool.Diameter
-            if isinstance(tool, Path.Tool):
+            # Hacky way to check for legacy tools, remove this after the release of 0.21
+            if not hasattr(tool, "BitShape"):
                 FreeCAD.Console.PrintError("Legacy Tools Not Supported: " + tool.Name + "\n")
                 self.set_tool_properties(dia)
                 return
@@ -168,7 +169,6 @@ class FeedSpeedPanel():
             material = tool.Material
             chipload = tool.Chipload
             self.set_tool_properties(dia, flutes, chipload, material)
-            print("tool props:", dia, flutes, material, chipload)
 
     def get_tool_controller(self):
         """get the tool controller"""
