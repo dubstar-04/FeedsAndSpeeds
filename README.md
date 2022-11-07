@@ -13,7 +13,8 @@ for the spindle speed and feedrate. This can be done by Spindle RPM or chipload 
 * write calculated feedrate and spindle speed to the selected tool controller
  
 ## Requirements
-* FreeCAD v0.19 or FreeCAD v0.20
+* FreeCAD v0.20 or later
+* Path Toolbit (Legacy tools not supported)
 * Python3  
 * Qt5
 
