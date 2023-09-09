@@ -2,7 +2,7 @@
 
 # ***************************************************************************
 # *                                                                         *
-# *   Copyright (c) 2020-2023 Daniel Wood <s.d.wood.82@googlemail.com>      *
+# *   Copyright (c) 2023 Daniel Wood <s.d.wood.82@googlemail.com>            *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -22,45 +22,52 @@
 # *                                                                         *
 # ***************************************************************************
 
-import os
-
 import FreeCADGui
 from PySide import QtGui
-import PathFeedsAndSpeedsGui
-import PathAddonCommon
 
 
-def getIcon(iconName):
-    __dir__ = os.path.dirname(__file__)
-    iconPath = os.path.join(__dir__, 'Icons')
-    return os.path.join(iconPath, iconName)
+def loadPathAddonMenu():
+    mw = FreeCADGui.getMainWindow()
+    mb = mw.menuBar()
+
+    # Find the path addon menu
+    pathAddonAction = mw.findChild(QtGui.QAction, "PathAddons")
+
+    if pathAddonAction:
+        pathAddonMenu = pathAddonAction.menu()
+    else:
+        pathAddonAction = QtGui.QAction(mw)
+        pathAddonAction.setObjectName("PathAddons")
+        pathAddonAction.setIconText("Path Addons")
+
+        pathAddonMenu = QtGui.QMenu("Path Addon Menu")
+        pathAddonMenu.setObjectName("PathAddonMenu")
+
+        pathAddonAction.setMenu(pathAddonMenu)
+
+    menuLoaded = False
+    for action in mb.actions():
+        if action.objectName() == "PathAddons":
+            menuLoaded = True
+            break
+
+    if not menuLoaded:
+        # add addon to the menu bar
+        mb.addAction(pathAddonAction)
+
+    return pathAddonMenu
 
 
-def getAction(mw, name):
-    """Get a QAction to show the feeds and speeds icon and launch the form"""
-    FeedsAndSpeedsAction = QtGui.QAction(mw)
-    FeedsAndSpeedsAction.setObjectName(name)
-    FeedsAndSpeedsAction.setIconText("Feeds and Speeds")
-    FeedsAndSpeedsAction.setStatusTip("Check Feeds and Speeds")
-    FeedsAndSpeedsAction.setIcon(QtGui.QPixmap(getIcon('Path_FeedsAndSpeeds.svg')))
-    FeedsAndSpeedsAction.triggered.connect(PathFeedsAndSpeedsGui.Show)
-    return FeedsAndSpeedsAction
+def loadToolBar(name, actions):
+    """Load a toolbar in the path workbench"""
+    mw = FreeCADGui.getMainWindow()
+    tb = QtGui.QToolBar(name)
+    tb.setObjectName(name + "_ToolBar")
 
+    for action in actions:
+        tbb = QtGui.QToolButton(tb)
+        # tbb.setObjectName("ToolButton")
+        tbb.setDefaultAction(action)
+        tb.addWidget(tbb)
 
-def updateMenu(workbench):
-    """Load the feeds and speeds menu and toolbar"""
-    if workbench == 'PathWorkbench':
-        print('Feeds and Speeds Addon loaded:', workbench)
-
-        mw = FreeCADGui.getMainWindow()
-        PathAddonCommon.loadToolBar("Feeds and Speeds", [getAction(mw, "FeedsandSpeedsToolbarAction")])
-
-        pathAddonMenu = PathAddonCommon.loadPathAddonMenu()
-        FeedsAndSpeedsAction = mw.findChild(QtGui.QAction, "FeedsandSpeedsMenuAction")
-
-        if not FeedsAndSpeedsAction:
-            # create addon action
-            pathAddonMenu.addAction(getAction(mw, "FeedsandSpeedsMenuAction"))
-
-
-FreeCADGui.getMainWindow().workbenchActivated.connect(updateMenu)
+    mw.addToolBar(tb)
