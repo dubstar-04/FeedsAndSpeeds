@@ -35,7 +35,7 @@ def getIcon(iconName):
 
 def updateMenu(workbench):
 
-    if workbench == 'PathWorkbench':
+    if workbench == 'PathWorkbench' or workbench == 'CAMWorkbench' :
     
         print('Feeds and Speeds Addon loaded:', workbench)
 
@@ -44,6 +44,8 @@ def updateMenu(workbench):
 
         # Find the main path menu
         pathMenu = mw.findChild(QtGui.QMenu, "&Path")
+        if pathMenu is None:
+            pathMenu = mw.findChild(QtGui.QMenu, "&CAM")
 
         for menu in pathMenu.actions():
             if menu.text() == "Path Addons":
@@ -53,7 +55,7 @@ def updateMenu(workbench):
 
         if addonMenu is None:
             addonMenu = QtGui.QMenu("Path Addons")
-            addonMenu.setObjectName("Path_Addons")
+            addonMenu = QtGui.QMenu("Path Addons")
 
             # Find the dressup menu entry
             dressupMenu = mw.findChild(QtGui.QMenu, "Path Dressup")
