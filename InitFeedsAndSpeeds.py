@@ -55,7 +55,7 @@ def updateMenu(workbench):
 
         if addonMenu is None:
             addonMenu = QtGui.QMenu("Path Addons")
-            addonMenu = QtGui.QMenu("Path Addons")
+            addonMenu.setObjectName("Path_Addons")
 
             # Find the dressup menu entry
             dressupMenu = mw.findChild(QtGui.QMenu, "Path Dressup")
