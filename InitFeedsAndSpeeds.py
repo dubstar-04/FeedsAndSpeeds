@@ -35,7 +35,8 @@ def getIcon(iconName):
 
 def updateMenu(workbench):
 
-    if workbench == 'PathWorkbench':
+    # with FreeCAD-0.22 Path was renamed to CAM
+    if workbench == 'PathWorkbench' or workbench == 'CAMWorkbench':
     
         print('Feeds and Speeds Addon loaded:', workbench)
 
@@ -43,7 +44,7 @@ def updateMenu(workbench):
         addonMenu = None
 
         # Find the main path menu
-        pathMenu = mw.findChild(QtGui.QMenu, "&Path")
+        pathMenu = mw.findChild(QtGui.QMenu, "&Path") or mw.findChild(QtGui.QMenu, "&CAM")
 
         for menu in pathMenu.actions():
             if menu.text() == "Path Addons":
