@@ -176,7 +176,8 @@ class FSCalculation:
         # materials = load_materials()
         Kp = float(self.material.get("Kp"))
         # C = Power Constant
-        C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
+        #C = getInterpolatedValue(load_powerConstant(), self.feedPerTooth)
+        C = 0.78 * self.feedPerTooth ** -0.2 # derived from Machineries Handbook 28, Table 2
         rpm = int((1000 * surfaceSpeed) / (math.pi * tool.toolDia))
         calc_rpm = rpm
 
