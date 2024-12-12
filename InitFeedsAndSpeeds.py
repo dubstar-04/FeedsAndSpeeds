@@ -2,7 +2,7 @@
 
 # ***************************************************************************
 # *                                                                         *
-# *   Copyright (c) 2020 Daniel Wood <s.d.wood.82@googlemail.com>            *
+# *   Copyright (c) 2020-2024 Daniel Wood <s.d.wood.82@googlemail.com>      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
