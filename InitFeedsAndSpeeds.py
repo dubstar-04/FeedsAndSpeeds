@@ -24,7 +24,7 @@
 
 import FreeCADGui
 from PySide import QtGui
-import PathFeedsAndSpeedsGui
+import CAMFeedsAndSpeedsGui
 import os
 
 __dir__ = os.path.dirname(__file__)
@@ -66,7 +66,7 @@ def updateMenu(workbench):
         action.setText("Feeds and Speeds")
         action.setIcon(QtGui.QPixmap(getIcon('CAM_FeedsAndSpeeds.svg')))
         action.setStatusTip("Check Feeds and Speeds")
-        action.triggered.connect(PathFeedsAndSpeedsGui.Show)
+        action.triggered.connect(CAMFeedsAndSpeedsGui.Show)
 
         # append this addon to addon menu
         addonMenu.addAction(action)

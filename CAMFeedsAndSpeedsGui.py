@@ -12,10 +12,10 @@ import Path
 from importFCMat import read
 import MaterialEditor
 
-import PathFeedsAndSpeeds
+import CAMFeedsAndSpeeds
 
 dir = os.path.dirname(__file__)
-ui_name = "PathFeedsAndSpeedsGui.ui"
+ui_name = "CAMFeedsAndSpeedsGui.ui"
 path_to_ui = os.path.join(dir, ui_name)
 material_dir = os.path.join(dir, 'Materials')
 iconPath = os.path.join(dir, 'Icons')
@@ -31,7 +31,7 @@ class FeedSpeedPanel():
         self.material = {}  # selected material
 
         # Init
-        self.calculation = PathFeedsAndSpeeds.FSCalculation()
+        self.calculation = CAMFeedsAndSpeeds.FSCalculation()
         self.load_materials()
         self.setup_ui()
         self.calculate()
@@ -215,7 +215,7 @@ class FeedSpeedPanel():
         if not self.validate_input():
             return
 
-        tool = PathFeedsAndSpeeds.Tool()
+        tool = CAMFeedsAndSpeeds.Tool()
 
         self.calculation.rpm_overide = self.form.rpm_LE.text()
         surfaceSpeed = float(self.form.ss_LE.text())
