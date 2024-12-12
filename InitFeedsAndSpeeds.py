@@ -2,7 +2,7 @@
 
 # ***************************************************************************
 # *                                                                         *
-# *   Copyright (c) 2020 Daniel Wood <s.d.wood.82@googlemail.com>            *
+# *   Copyright (c) 2020-2024 Daniel Wood <s.d.wood.82@googlemail.com>      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -24,7 +24,7 @@
 
 import FreeCADGui
 from PySide import QtGui
-import PathFeedsAndSpeedsGui
+import CAMFeedsAndSpeedsGui
 import os
 
 __dir__ = os.path.dirname(__file__)
@@ -35,7 +35,7 @@ def getIcon(iconName):
 
 def updateMenu(workbench):
 
-    if workbench == 'PathWorkbench':
+    if workbench == 'CAMWorkbench':
     
         print('Feeds and Speeds Addon loaded:', workbench)
 
@@ -43,30 +43,30 @@ def updateMenu(workbench):
         addonMenu = None
 
         # Find the main path menu
-        pathMenu = mw.findChild(QtGui.QMenu, "&Path")
+        pathMenu = mw.findChild(QtGui.QMenu, "&CAM")
 
         for menu in pathMenu.actions():
-            if menu.text() == "Path Addons":
+            if menu.text() == "CAM Addons":
                 # create a new addon menu
                 addonMenu = menu.menu()
                 break
 
         if addonMenu is None:
-            addonMenu = QtGui.QMenu("Path Addons")
-            addonMenu.setObjectName("Path_Addons")
+            addonMenu = QtGui.QMenu("CAM Addons")
+            addonMenu.setObjectName("CAM_Addons")
 
             # Find the dressup menu entry
             dressupMenu = mw.findChild(QtGui.QMenu, "Path Dressup")
 
-            #addonMenu.setTitle("Path Addons")
+            #addonMenu.setTitle("CAM Addons")
             pathMenu.insertMenu(dressupMenu.menuAction(), addonMenu)
 
         # create an action for this addon
         action = QtGui.QAction(addonMenu)
         action.setText("Feeds and Speeds")
-        action.setIcon(QtGui.QPixmap(getIcon('Path_FeedsAndSpeeds.svg')))
+        action.setIcon(QtGui.QPixmap(getIcon('CAM_FeedsAndSpeeds.svg')))
         action.setStatusTip("Check Feeds and Speeds")
-        action.triggered.connect(PathFeedsAndSpeedsGui.Show)
+        action.triggered.connect(CAMFeedsAndSpeedsGui.Show)
 
         # append this addon to addon menu
         addonMenu.addAction(action)

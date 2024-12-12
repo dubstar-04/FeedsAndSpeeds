@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Path Feeds and Speeds</string>
+   <string>Feeds and Speeds</string>
   </property>
   <property name="statusTip">
    <string/>
