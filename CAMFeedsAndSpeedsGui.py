@@ -105,6 +105,10 @@ class FeedSpeedPanel():
                 QtGui.QMessageBox.warning(FreeCADGui.getMainWindow(), "Warning", "Material is missing path parameters")
 
     def set_tool_properties(self, dia=6, flutes=2, chipload=None, material="HSS"):
+        # print("dia", dia)
+        # print("flutes", flutes)
+        # print("chipload", chipload)
+        # print("material", material)
         """set the tool properties for the selected tool"""
         self.form.toolDia_LE.setText(str(dia))
         self.form.flutes_SB.setValue(flutes)
@@ -164,10 +168,10 @@ class FeedSpeedPanel():
             tool = tc.Tool
             dia = tool.Diameter
             # Hacky way to check for legacy tools, remove this after the release of 0.21
-            if not hasattr(tool, "BitShape"):
-                FreeCAD.Console.PrintError("Legacy Tools Not Supported: " + tool.Name + "\n")
-                self.set_tool_properties(dia)
-                return
+            # if not hasattr(tool, "BitShape"):
+            #     FreeCAD.Console.PrintError("Legacy Tools Not Supported: " + tool.Name + "\n")
+            #     self.set_tool_properties(dia)
+            #     return
             flutes = tool.Flutes
             material = tool.Material
             chipload = tool.Chipload
@@ -247,7 +251,7 @@ class FeedSpeedPanel():
         self.form.hp_result.setText("-")
         if Hp is not None:
             watts = Hp * 745.69
-            self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 2)) + " watts")
+            self.form.hp_result.setText(str(round(Hp, 2)) + " hp / " + str(round(watts, 3)) + " watts")
 
     def show(self):
         """show the form"""

@@ -45,6 +45,10 @@ def load_powerConstant():
         # Data from Machineries Handbook 28.
         # Table 2
         # mm/tooth : C
+            0.001: 2.8, # Logarythmic "guestimation"
+            0.005: 2.2, # just look the values in LibreOffice CALC X-Y graph
+            0.01: 1.95, # and make axis with 1st numbers Logarythmic = pretty straight line!
+
             0.02: 1.70,  # noqa: E131
             0.05: 1.40,  # noqa: E131
             0.07: 1.30,  # noqa: E131
